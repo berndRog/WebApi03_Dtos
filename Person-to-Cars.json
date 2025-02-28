@@ -1,0 +1,61 @@
+{
+  "people": [
+    {
+      "id": "10000000-0000-0000-0000-000000000000",
+      "firstname": "Erika",
+      "lastname": "Mustermann",
+      "email": "m.mustermann@gmail.com",
+      "phone": "05826 1234 5678",
+      "imageurl": null,
+      "cars": [
+        {
+          "id": "01000000-0000-0000-0000-000000000000",
+          "maker": "VW",
+          "model": "Golf",
+          "year": 2018,
+          "price": 15000.0,
+          "imageurl": null,
+          "personId": "10000000-0000-0000-0000-000000000000",
+          "person": {
+            // endlos zyklus vermeiden
+          }          
+        },
+        {
+          "id": "02000000-0000-0000-0000-000000000000",
+          "maker": "BMW",
+          "model": "520",
+          "year": 2020,
+          "price": 29000.0
+        }
+      ]
+    },
+    {
+      "Id": "20000000-0000-0000-0000-000000000000",
+      "FirstName": "Max",
+      "LastName": "Mustermann",
+      "Email": null,
+      "Phone": null,
+      "ImageUrl": null,
+      "Cars": []
+    }
+  ],
+  "cars": [
+    {
+      "id": "01000000-0000-0000-0000-000000000000",
+      "maker": "VW",
+      "model": "Golf",
+      "year": 2018,
+      "price": 15000.0,
+      "personId": "10000000-0000-0000-0000-000000000000"
+    },
+    {
+      "id": "02000000-0000-0000-0000-000000000000",
+      "maker": "BMW",
+      "model": "520",
+      "year": 2020,
+      "price": 29000.0,
+      "personId":"10000000-0000-0000-0000-000000000000"
+    }
+    
+  }
+}
