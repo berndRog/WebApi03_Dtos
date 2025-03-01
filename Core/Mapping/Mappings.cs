@@ -5,12 +5,12 @@ namespace WebApi.Core.Mapping;
 public static class Mappings {
    
    // Entity Person -> DTO PersonDto
-   public static PersonDto ToPersonDto(this Person person) =>
-      new PersonDto(person.Id, person.FirstName, person.LastName, person.Email, person.Phone);
+   public static PersonDto ToPersonDto(this Person p) =>
+      new PersonDto(p.Id, p.FirstName, p.LastName, p.Email, p.Phone);
    
    // DTO PersonDto -> Entity Person
-   public static Person ToPerson(this PersonDto personDto) =>
-      new Person(personDto.Id, personDto.FirstName, personDto.LastName, personDto.Email, personDto.Phone);
+   public static Person ToPerson(this PersonDto dto) =>
+      new Person(dto.Id, dto.FirstName, dto.LastName, dto.Email, dto.Phone);
    
    // Entity Car -> DTO CarDto
    public static CarDto ToCarDto(this Car car) =>

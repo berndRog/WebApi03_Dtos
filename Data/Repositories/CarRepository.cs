@@ -25,17 +25,14 @@ public class CarRepository(
          .Where(person => person.Id == personId)
          .SelectMany(person =>  person.Cars)
          .ToList();
-
-   public ICollection<Car> SelectByMaker(string maker) =>
-      dataContext.Cars
-         .Where(car => car.Maker == maker)
-         .ToList();
-
+   
    public ICollection<Car> SelectByAttributes(
       string? maker = null, 
       string? model = null,
-      int? year = null,
-      double? price = null
+      int? yearMin = null,
+      int? yearMax = null,
+      double? priceMin = null,
+      double? priceMax = null
    ) {
       var query = dataContext.Cars.AsQueryable();
    
@@ -43,10 +40,15 @@ public class CarRepository(
          query = query.Where(car => car.Maker == maker);
       if (!string.IsNullOrEmpty(model))
          query = query.Where(car => car.Model == model);
-      if (year.HasValue)
-         query = query.Where(car => car.Year == year.Value);
-      if (price.HasValue)
-         query = query.Where(car => car.Price == price.Value);
+      if (yearMin.HasValue)
+         query = query.Where(car => car.Year >= yearMin.Value);
+      if (yearMin.HasValue)
+         query = query.Where(car => car.Year <= yearMax.Value);
+      if (priceMin.HasValue)
+         query = query.Where(car => car.Price >= priceMin.Value);
+      if (priceMax.HasValue)
+         query = query.Where(car => car.Price <= priceMax.Value);
+
       return query.ToList();
    }
 }

@@ -5,17 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>WebApi</RootNamespace>
- 
-
-
   </PropertyGroup>
 
   <PropertyGroup>
     <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
     <OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)</OpenApiDocumentsDirectory>
   </PropertyGroup>
-  
-  
   
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
@@ -29,7 +24,6 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.0.18" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.0" />
   </ItemGroup>
-  
   
   
   <ItemGroup>
