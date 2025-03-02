@@ -15,9 +15,6 @@ public class DataContext: IDataContext {
 
    public ICollection<Person> People { get; } = [];
    public ICollection<Car> Cars { get; } = [];
-
-   public ICollection<PersonDto> PersonDtos { get; } = [];
-   public ICollection<CarDto> CarDto { get; } = [];
    
    private class CombinedCollections {
       public ICollection<PersonDto> PersonDtos { get; init; } = [];
@@ -64,7 +61,6 @@ public class DataContext: IDataContext {
             json,
             GetJsonSerializerOptions()
          ) ?? throw new ApplicationException("Deserialization failed");
-
          People = combinedCollections.PersonDtos.Select(dto => dto.ToPerson()).ToList();
          Cars = combinedCollections.CarDtos.Select(dto => dto.ToCar()).ToList();
       }

@@ -7,9 +7,8 @@ using WebApi.Core.Dtos;
 using WebApi.Core.Mapping;
 namespace WebApi.Controllers.V2;
 
-//[ApiVersion("2.0")]
-//[Route("carshop/v{version:apiVersion}")]
-[Route("carshop")]
+[ApiVersion("2.0")]
+[Route("carshop/v{version:apiVersion}")]
 
 [ApiController]
 [Consumes("application/json")] //default
@@ -104,6 +103,9 @@ public class PersonController(
       [Description("PersonDto with the new person's data")]
       [FromBody] PersonDto personDto
    ) {
+      if(personRepository.FindById(personDto.Id) != null) 
+         helper.DetailsBadRequest<PersonDto>("Person with given id already exists"); 
+      
       // map dto to entity
       var person = personDto.ToPerson();
       

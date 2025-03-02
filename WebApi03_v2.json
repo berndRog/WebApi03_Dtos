@@ -3,10 +3,10 @@
   "info": {
     "title": "CarShop API",
     "description": "Online marketplace for used cars.",
-    "version": "v1"
+    "version": "v2"
   },
   "paths": {
-    "/carshop/v1/cars": {
+    "/carshop/v2/cars": {
       "get": {
         "tags": [
           "Cars"
@@ -29,7 +29,7 @@
         }
       }
     },
-    "/carshop/v1/cars/attributes": {
+    "/carshop/v2/cars/attributes": {
       "get": {
         "tags": [
           "Cars"
@@ -106,7 +106,7 @@
         }
       }
     },
-    "/carshop/v1/people/{personId}/cars": {
+    "/carshop/v2/people/{personId}/cars": {
       "get": {
         "tags": [
           "Cars"
@@ -209,7 +209,7 @@
         }
       }
     },
-    "/carshop/v1/cars/{id}": {
+    "/carshop/v2/cars/{id}": {
       "get": {
         "tags": [
           "Cars"
@@ -241,7 +241,7 @@
         }
       }
     },
-    "/carshop/v1/people/{personId}/cars/{id}": {
+    "/carshop/v2/people/{personId}/cars/{id}": {
       "put": {
         "tags": [
           "Cars"
@@ -367,6 +367,259 @@
           }
         }
       }
+    },
+    "/carshop/v2/people": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "summary": "Get all people",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Person"
+        ],
+        "summary": "Create a new person",
+        "requestBody": {
+          "description": "PersonDto with the new person's data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carshop/v2/people/{id}": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "summary": "Get person by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique id of the person to be found",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": { }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Person"
+        ],
+        "summary": "Update a person",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique id of the existing person",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "PersonDto with the updated person's data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Person"
+        ],
+        "summary": "Delete a person",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique id of the existing person",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": { }
+            }
+          }
+        }
+      }
+    },
+    "/carshop/v2/people/name": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "summary": "Get person by name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Name to be search for",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": { }
+            }
+          }
+        }
+      }
+    },
+    "/carshop/v2/people/email": {
+      "get": {
+        "tags": [
+          "Person"
+        ],
+        "summary": "Get person by email",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email to be search for",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDto"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -412,6 +665,36 @@
           }
         }
       },
+      "PersonDto": {
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "phone"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -443,6 +726,9 @@
   "tags": [
     {
       "name": "Cars"
+    },
+    {
+      "name": "Person"
     }
   ]
 }

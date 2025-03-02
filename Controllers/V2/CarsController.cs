@@ -7,9 +7,9 @@ using WebApi.Core.Dtos;
 using WebApi.Core.Mapping;
 namespace WebApi.Controllers.V2; 
 
-//[ApiVersion("2.0")]
-//[Route("carshop/v{version:apiVersion}")]
-[Route("carshop")]
+[ApiVersion("1.0")]
+[ApiVersion("2.0")]
+[Route("carshop/v{version:apiVersion}")]
 
 [ApiController]
 [Consumes("application/json")] //default
@@ -88,8 +88,6 @@ public class CarsController(
    }
    
    /// <summary>
-   /// Get car by id
-   /// </summary>
    /// <param name="id">Unique id of the car to be search for</param>
    [HttpGet("cars/{id:guid}")]
    [EndpointSummary("Get car by id")]
@@ -118,6 +116,9 @@ public class CarsController(
       [Description("CarDto of the new car's data")]
       [FromBody]  CarDto carDto
    ) {
+      if(carRepository.FindById(carDto.Id) != null)
+         return helper.DetailsBadRequest<CarDto>("Car with given Id already exists");
+      
       // find person in the repository
       var person = personRepository.FindById(personId);
       if (person == null)

@@ -30,19 +30,10 @@ public class Program {
       // Add versioning
       builder.Services.AddApiVersioning();
       
-      builder.Services.AddOpenApi(options => {
-         options.AddDocumentTransformer((document, context, cancellationToken) => {
-            document.Info = new() {
-               Title = "CarShop API",
-               Version = "v1",
-               Description = "Online marketplace for used cars."
-            };
-            return Task.CompletedTask;
-         });
-      });
-      
-      
-      //builder.Services.AddOpenApi("v2");
+      // Add OpenApi
+      builder.Services.AddOpenApiSettings("v1");
+      builder.Services.AddOpenApiSettings("v2");
+
       
       builder.Services.AddSingleton<IPersonRepository, PersonRepository>();
       builder.Services.AddSingleton<ICarRepository, CarRepository>();
@@ -56,7 +47,7 @@ public class Program {
          
          app.UseSwaggerUI(opt => {
             opt.SwaggerEndpoint("/openapi/v1.json", "CarShop API v1");
-            //opt.SwaggerEndpoint("/openapi/v2.json", "CarShop API v2");
+            opt.SwaggerEndpoint("/openapi/v2.json", "CarShop API v2");
          });
          
          
