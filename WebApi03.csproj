@@ -24,10 +24,5 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.0.18" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.0" />
   </ItemGroup>
-  
-  
-  <ItemGroup>
-    <Folder Include="Controllers\V1\" />
-  </ItemGroup>
 
 </Project>

@@ -2,9 +2,9 @@ using WebApi.Core;
 using WebApi.Core.DomainModel.Entities;
 namespace WebApi.Data.Repositories;
 
-public class PersonRepository(
+public class PeopleRepository(
    IDataContext dataContext   
-): IPersonRepository {
+): IPeopleRepository {
 
    public Person? FindById(Guid id) =>
       dataContext.People.FirstOrDefault(person => person.Id == id);
@@ -22,8 +22,10 @@ public class PersonRepository(
          person.FirstName == firstName && person.LastName == lastName);
    }
 
-   public void Add(Person person) =>
+   public void Add(Person person) {
+      throw new Exception("test error");
       dataContext.People.Add(person);
+   }
 
    public void Update(Person updPerson) {
       var person = dataContext.People.FirstOrDefault(person => 

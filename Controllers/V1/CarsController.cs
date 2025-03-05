@@ -5,9 +5,9 @@ using WebApi.Core;
 using WebApi.Core.DomainModel.Entities;
 using WebApi.Core.Dtos;
 using WebApi.Core.Mapping;
-namespace WebApi.Controllers.V2; 
+namespace WebApi.Controllers.V1; 
 
-[ApiVersion("2.0")]
+[ApiVersion("1.0")]
 [Route("carshop/v{version:apiVersion}")]
 
 [ApiController]

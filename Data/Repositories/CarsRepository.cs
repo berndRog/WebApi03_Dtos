@@ -1,9 +1,9 @@
 using WebApi.Core;
 using WebApi.Core.DomainModel.Entities;
 namespace WebApi.Data.Repositories;
-public class CarRepository(
+public class CarsRepository(
    IDataContext dataContext
-): ICarRepository {
+): ICarsRepository {
    
    public ICollection<Car> SelectAll() =>
       dataContext.Cars;

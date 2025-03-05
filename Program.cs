@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.HttpLogging;
 using Scalar.AspNetCore;
-using WebApi.Controllers.V2;
 using WebApi.Core;
 using WebApi.Data;
 using WebApi.Data.Repositories;
@@ -18,14 +17,26 @@ public class Program {
       // Configure DI-Container -----------------------------------------
       // add http logging 
       builder.Services.AddHttpLogging(opts =>
-         opts.LoggingFields = HttpLoggingFields.All);
-      
-      // Add ProblemDetails, see https://tools.ietf.org/html/rfc7807
-      builder.Services.AddProblemDetails();
+         opts.LoggingFields = HttpLoggingFields.None);
       
       // Add controllers
       builder.Services.AddControllers();
-      builder.Services.AddScoped<ControllerHelper>();
+      
+      // Add ProblemDetails, see https://tools.ietf.org/html/rfc7807
+      builder.Services.AddProblemDetails(options => {
+         // Customize problem details based on environment
+         options.CustomizeProblemDetails = context => {
+            // Add exception details only in development
+            context.ProblemDetails.Extensions["devMode"] = builder.Environment.IsDevelopment();
+
+            // Add additional information if needed
+            if (builder.Environment.IsDevelopment()) {
+               // Include stack trace or other debug info in development
+               if (context.Exception != null)
+                  context.ProblemDetails.Extensions["stackTrace"] = context.Exception.StackTrace;
+            }
+         };
+      });
       
       // Add versioning
       builder.Services.AddApiVersioning();
@@ -33,10 +44,9 @@ public class Program {
       // Add OpenApi
       builder.Services.AddOpenApiSettings("v1");
       builder.Services.AddOpenApiSettings("v2");
-
       
-      builder.Services.AddSingleton<IPersonRepository, PersonRepository>();
-      builder.Services.AddSingleton<ICarRepository, CarRepository>();
+      builder.Services.AddSingleton<IPeopleRepository, PeopleRepository>();
+      builder.Services.AddSingleton<ICarsRepository, CarsRepository>();
       builder.Services.AddSingleton<IDataContext, DataContext>();
       
       var app = builder.Build();

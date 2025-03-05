@@ -79,7 +79,7 @@ public class DataContext: IDataContext {
       };
    }
 
-   public void SaveChanges() {
+   public void SaveAllChanges() {
       try {
          var combinedCollections = new {
             PersonDtos = People.Select(person => person.ToPersonDto()).ToList(), 

@@ -1,7 +1,7 @@
 using WebApi.Core.DomainModel.Entities;
 namespace WebApi.Core;
 
-public interface IPersonRepository {
+public interface IPeopleRepository {
    Person? FindById(Guid id);
    Person? FindByEmail(string email);
    Person? FindByName(string name);

@@ -5,17 +5,16 @@ using WebApi.Core;
 using WebApi.Core.DomainModel.Entities;
 using WebApi.Core.Dtos;
 using WebApi.Core.Mapping;
-namespace WebApi.Controllers.V2;
+namespace WebApi.Controllers.V1;
 
-[ApiVersion("2.0")]
+[ApiVersion("1.0")]
 [Route("carshop/v{version:apiVersion}")]
 
 [ApiController]
-[Consumes("application/json")] //default
-[Produces("application/json")] //default
-public class PersonController(
-   ControllerHelper helper,
-   IPersonRepository personRepository,
+[Consumes("application/json","appliation/xml")] //default
+[Produces("application/json", "appliation/xml")] //default
+public class PeopleController(
+   IPeopleRepository peopleRepository,
    IDataContext dataContext
    //ILogger<PersonController> logger
 ) : ControllerBase {
@@ -29,7 +28,7 @@ public class PersonController(
    [EndpointSummary("Get all people")] 
    [ProducesResponseType(StatusCodes.Status200OK)]
    public ActionResult<IEnumerable<PersonDto>> GetAll() {
-      var people = personRepository.SelectAll();
+      var people = peopleRepository.SelectAll();
       return Ok(people.Select(p => p.ToPersonDto()));
    }
  
@@ -52,9 +51,9 @@ public class PersonController(
       //    case null:
       //       return NotFound("Owner with given Id not found");
       // };
-      return personRepository.FindById(id) switch {
+      return peopleRepository.FindById(id) switch {
          Person person => Ok(person.ToPersonDto()),
-         null => helper.DetailsNotFound<PersonDto>("Person with given id not found")
+         null => NotFound("Person with given id not found")
       };
    }
    
@@ -70,7 +69,7 @@ public class PersonController(
       [Description("Name to be search for")]
       [FromQuery] string name
    ) {
-      return personRepository.FindByName(name) switch {
+      return peopleRepository.FindByName(name) switch {
          Person person => Ok(person.ToPersonDto()),
          null => NotFound("Person with given name not found")
       };
@@ -86,7 +85,7 @@ public class PersonController(
       [Description("Email to be search for")]
       [FromQuery] string email
    ) {
-      return personRepository.FindByEmail(email) switch {
+      return peopleRepository.FindByEmail(email) switch {
          Person person => Ok(person.ToPersonDto()),
          null => NotFound("Person with given email not found")
       };
@@ -103,15 +102,15 @@ public class PersonController(
       [Description("PersonDto with the new person's data")]
       [FromBody] PersonDto personDto
    ) {
-      if(personRepository.FindById(personDto.Id) != null) 
-         helper.DetailsBadRequest<PersonDto>("Person with given id already exists"); 
+      if(peopleRepository.FindById(personDto.Id) != null) 
+         BadRequest("Person with given id already exists"); 
       
       // map dto to entity
       var person = personDto.ToPerson();
       
       // add person to repository and save changes
-      personRepository.Add(person);
-      dataContext.SaveChanges();
+      peopleRepository.Add(person);
+      dataContext.SaveAllChanges();
       
       return Created($"/people/{person.Id}", person.ToPersonDto());
    }
@@ -132,7 +131,7 @@ public class PersonController(
       [FromBody] PersonDto updPersonDto
    ) {
       // find person in the repository
-      var person = personRepository.FindById(id);
+      var person = peopleRepository.FindById(id);
       if (person == null) return NotFound("Person with given id not found");
       
       // map dto to entity
@@ -141,8 +140,8 @@ public class PersonController(
       person.Update(updPerson);
       
       // update person in the repository and save changes
-      personRepository.Update(person);
-      dataContext.SaveChanges();
+      peopleRepository.Update(person);
+      dataContext.SaveAllChanges();
       
       return Ok(person.ToPersonDto());
    }
@@ -160,12 +159,12 @@ public class PersonController(
       [FromRoute] Guid id
    ) {
       // find person in the repository
-      var person = personRepository.FindById(id);
+      var person = peopleRepository.FindById(id);
       if (person == null) return NotFound();
      
       // remove person from the repository and save changes
-      personRepository.Remove(person);
-      dataContext.SaveChanges();
+      peopleRepository.Remove(person);
+      dataContext.SaveAllChanges();
       
       return NoContent();
    }

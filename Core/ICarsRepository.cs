@@ -1,7 +1,7 @@
 using WebApi.Core.DomainModel.Entities;
 namespace WebApi.Core;
 
-public interface ICarRepository {
+public interface ICarsRepository {
    ICollection<Car> SelectAll();
    ICollection<Car> SelectByAttributes(
       string? maker, string? model, int? yearMin, int? yearMax, 
