@@ -23,7 +23,7 @@ public class PeopleRepository(
    }
 
    public void Add(Person person) {
-      throw new Exception("test error");
+      // throw new Exception("test error");
       dataContext.People.Add(person);
    }
 

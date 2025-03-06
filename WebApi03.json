@@ -11,7 +11,6 @@
         "tags": [
           "Cars"
         ],
-        "summary": "Get all cars",
         "responses": {
           "200": {
             "description": "OK",
@@ -34,12 +33,10 @@
         "tags": [
           "Cars"
         ],
-        "summary": "Get cars by attributes",
         "parameters": [
           {
             "name": "maker",
             "in": "header",
-            "description": "maker of the car to be search for (can be null)",
             "schema": {
               "type": "string"
             }
@@ -47,7 +44,6 @@
           {
             "name": "model",
             "in": "header",
-            "description": "model of the car to be search for (can be null)",
             "schema": {
               "type": "string"
             }
@@ -55,7 +51,6 @@
           {
             "name": "yearMin",
             "in": "header",
-            "description": "year >= yearMin of the car to be search for (can be null)",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -64,7 +59,6 @@
           {
             "name": "yearMax",
             "in": "header",
-            "description": "year <= yearMax of the car to be search for (can be null)",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -73,7 +67,6 @@
           {
             "name": "priceMin",
             "in": "header",
-            "description": "price >= priceMin of the car to be search for (can be null)",
             "schema": {
               "type": "number",
               "format": "double"
@@ -82,7 +75,6 @@
           {
             "name": "priceMax",
             "in": "header",
-            "description": "price <= priceMax of the car to be search for (can be null)",
             "schema": {
               "type": "number",
               "format": "double"
@@ -111,12 +103,10 @@
         "tags": [
           "Cars"
         ],
-        "summary": "Get all cars of a given person",
         "parameters": [
           {
             "name": "personId",
             "in": "path",
-            "description": "Unique id for the given person",
             "required": true,
             "schema": {
               "type": "string",
@@ -155,12 +145,10 @@
         "tags": [
           "Cars"
         ],
-        "summary": "Create a new car for a given person",
         "parameters": [
           {
             "name": "personId",
             "in": "path",
-            "description": "Unique id of the given person",
             "required": true,
             "schema": {
               "type": "string",
@@ -169,7 +157,6 @@
           }
         ],
         "requestBody": {
-          "description": "CarDto of the new car's data",
           "content": {
             "application/json": {
               "schema": {
@@ -214,12 +201,10 @@
         "tags": [
           "Cars"
         ],
-        "summary": "Get car by id",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "Unique id of the car to be search for",
             "required": true,
             "schema": {
               "type": "string",
@@ -246,12 +231,10 @@
         "tags": [
           "Cars"
         ],
-        "summary": "Update a car for a given person",
         "parameters": [
           {
             "name": "personId",
             "in": "path",
-            "description": "Unique id for the given person",
             "required": true,
             "schema": {
               "type": "string",
@@ -261,7 +244,6 @@
           {
             "name": "id",
             "in": "path",
-            "description": "Unique id for the car to be updated",
             "required": true,
             "schema": {
               "type": "string",
@@ -270,7 +252,6 @@
           }
         ],
         "requestBody": {
-          "description": "CarDto of the updated car's data",
           "content": {
             "application/json": {
               "schema": {
@@ -324,12 +305,10 @@
         "tags": [
           "Cars"
         ],
-        "summary": "Delete a car for a given person",
         "parameters": [
           {
             "name": "personId",
             "in": "path",
-            "description": "Unique id for the given person",
             "required": true,
             "schema": {
               "type": "string",
@@ -339,7 +318,6 @@
           {
             "name": "id",
             "in": "path",
-            "description": "Unique id for the given car",
             "required": true,
             "schema": {
               "type": "string",
@@ -373,7 +351,6 @@
         "tags": [
           "People"
         ],
-        "summary": "Get all people",
         "responses": {
           "200": {
             "description": "OK",
@@ -402,9 +379,7 @@
         "tags": [
           "People"
         ],
-        "summary": "Create a new person",
         "requestBody": {
-          "description": "PersonDto with the new person's data",
           "content": {
             "application/json": {
               "schema": {
@@ -443,12 +418,10 @@
         "tags": [
           "People"
         ],
-        "summary": "Get person by id",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "Unique id of the person to be found",
             "required": true,
             "schema": {
               "type": "string",
@@ -490,12 +463,10 @@
         "tags": [
           "People"
         ],
-        "summary": "Update a person",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "Unique id of the existing person",
             "required": true,
             "schema": {
               "type": "string",
@@ -504,7 +475,6 @@
           }
         ],
         "requestBody": {
-          "description": "PersonDto with the updated person's data",
           "content": {
             "application/json": {
               "schema": {
@@ -556,12 +526,10 @@
         "tags": [
           "People"
         ],
-        "summary": "Delete a person",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "Unique id of the existing person",
             "required": true,
             "schema": {
               "type": "string",
@@ -585,12 +553,10 @@
         "tags": [
           "People"
         ],
-        "summary": "Get person by name",
         "parameters": [
           {
             "name": "name",
             "in": "query",
-            "description": "Name to be search for",
             "schema": {
               "type": "string"
             }
@@ -632,12 +598,10 @@
         "tags": [
           "People"
         ],
-        "summary": "Get person by email",
         "parameters": [
           {
             "name": "email",
             "in": "query",
-            "description": "Email to be search for",
             "schema": {
               "type": "string"
             }
@@ -657,6 +621,18 @@
                   "$ref": "#/components/schemas/PersonDto"
                 }
               }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": { },
+              "appliation/xml": { }
             }
           }
         }
@@ -761,6 +737,13 @@
             "nullable": true
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Json Web Token"
       }
     }
   },

@@ -24,12 +24,9 @@ public class Program {
       
       // Add ProblemDetails, see https://tools.ietf.org/html/rfc7807
       builder.Services.AddProblemDetails(options => {
-         // Customize problem details based on environment
          options.CustomizeProblemDetails = context => {
             // Add exception details only in development
             context.ProblemDetails.Extensions["devMode"] = builder.Environment.IsDevelopment();
-
-            // Add additional information if needed
             if (builder.Environment.IsDevelopment()) {
                // Include stack trace or other debug info in development
                if (context.Exception != null)

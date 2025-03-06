@@ -39,8 +39,8 @@ public static class ExtensionsServices {
       string version
    ) {
 
-      services.AddOpenApi(version, options => {
-         options.AddDocumentTransformer((document, context, cancellationToken) => {
+      services.AddOpenApi(version, opt => {
+         opt.AddDocumentTransformer((document, _, _) => {
             document.Info = new() {
                Title = "CarShop API",
                Version = version,
@@ -49,20 +49,20 @@ public static class ExtensionsServices {
             return Task.CompletedTask;
          });
 
-         //options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
-         // options.AddDocumentTransformer((document, context, cancellationToken) => {
-         //    var requirements = new Dictionary<string, OpenApiSecurityScheme> {
-         //       ["Bearer"] = new OpenApiSecurityScheme {
-         //          Type = SecuritySchemeType.Http,
-         //          Scheme = "bearer", // "bearer" refers to the header name here
-         //          In = ParameterLocation.Header,
-         //          BearerFormat = "Json Web Token"
-         //       }
-         //    };
-         //    document.Components ??= new OpenApiComponents();
-         //    document.Components.SecuritySchemes = requirements;
-         //    return Task.CompletedTask;
-         // });
+         opt.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+          opt.AddDocumentTransformer((document, context, cancellationToken) => {
+             var requirements = new Dictionary<string, OpenApiSecurityScheme> {
+                ["Bearer"] = new OpenApiSecurityScheme {
+                   Type = SecuritySchemeType.Http,
+                   Scheme = "bearer", // "bearer" refers to the header name here
+                   In = ParameterLocation.Header,
+                   BearerFormat = "Json Web Token"
+                }
+             };
+             document.Components ??= new OpenApiComponents();
+             document.Components.SecuritySchemes = requirements;
+             return Task.CompletedTask;
+          });
       });
 
       return services;

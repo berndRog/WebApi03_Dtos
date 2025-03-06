@@ -98,6 +98,7 @@ public class PeopleController(
    [HttpPost("people")]
    [EndpointSummary("Create a new person")]
    [ProducesResponseType(StatusCodes.Status201Created)]
+   [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
    public ActionResult<PersonDto> Create(
       [Description("PersonDto with the new person's data")]
       [FromBody] PersonDto personDto
@@ -123,7 +124,7 @@ public class PeopleController(
    [HttpPut("people/{id}")]
    [EndpointSummary("Update a person")]
    [ProducesResponseType(StatusCodes.Status200OK)]
-   [ProducesResponseType(StatusCodes.Status404NotFound)]
+   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
    public ActionResult<PersonDto> Update(
       [Description("Unique id of the existing person")]
       [FromRoute] Guid id,
