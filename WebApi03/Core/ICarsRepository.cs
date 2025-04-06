@@ -9,10 +9,10 @@ public interface ICarsRepository: IBaseRepository<Car> {
    //void Update(Car updCar);
    //void Remove(Car car);
    
-   IEnumerable<Car>? SelectByAttributes(
+   IEnumerable<Car> SelectByAttributes(
       string? maker, string? model, int? yearMin, int? yearMax, 
       decimal? priceMin, decimal? priceMax);
    
-   IEnumerable<Car>? SelectCarsByPersonId(Guid personId);
+   IEnumerable<Car> SelectCarsByPersonId(Guid personId);
    
 }

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using DeepEqual;
 using DeepEqual.Syntax;
 using WebApi.Core.DomainModel.Entities;
-using WebApiTest.Data.Repositories;
 using Xunit;
 namespace WebApiTest.Data.Repositories;
 
@@ -165,20 +166,88 @@ public class CarsRepositoryUt : BaseRepository {
    }
    
    [Fact]
-   public void SelectCarsByPersonIdUt() {
+   public void SelectByAttributesUt() {
       // Arrange
-      _peopleRepository.Add(_seed.Person1);
+      _peopleRepository.AddRange(_seed.People);
       _dataContext.SaveAllChanges();
       _dataContext.ClearChangeTracker();
       // retriv person from database to track it
-      var actualPerson = _peopleRepository.FindById(_seed.Person1.Id);
-      Assert.NotNull(actualPerson);
+      var actualPeople = _peopleRepository.SelectAll();
+      Assert.Equal(4, actualPeople.ToList().Count);
       // domain model
-      actualPerson.AddCar(_seed.Car1);
-      actualPerson.AddCar(_seed.Car2);
+      var (updPeople, updCars) = Seed.InitPeopleWithCars(actualPeople, _seed.Cars);
       // add cars cars to repository and save all cars to database
-      _carsRepository.Add(_seed.Car1);
-      _carsRepository.Add(_seed.Car2);
+      _carsRepository.AddRange(updCars);
+      _dataContext.SaveAllChanges();
+      _dataContext.ClearChangeTracker();
+      var expectedCars = new List<Car> {updCars.ToList()[4]};
+      
+      // Act
+      var actual = _carsRepository.SelectByAttributes(
+         maker:"BMW",
+         model:"X5",
+         yearMin: 2020,
+         yearMax: DateOnly.FromDateTime(DateTime.Now).Year,
+         priceMin: 45_000,
+         priceMax: 50_000
+      );
+      
+      // Assert
+      var comparison = new ComparisonBuilder()
+         //       .IgnoreCircularReferences()
+         .IgnoreProperty<Car>(c=> c.Person)
+         .Create();
+      Assert.True(expectedCars.IsDeepEqual(actual, comparison));
+   }
+
+   [Fact]
+   public void SelectByAttributesEmptyUt() {
+      // Arrange
+      _peopleRepository.AddRange(_seed.People);
+      _dataContext.SaveAllChanges();
+      _dataContext.ClearChangeTracker();
+      // retriv person from database to track it
+      var actualPeople = _peopleRepository.SelectAll();
+      Assert.Equal(4, actualPeople.ToList().Count);
+      // domain model
+      var (updPeople, updCars) = Seed.InitPeopleWithCars(actualPeople, _seed.Cars);
+      // add cars cars to repository and save all cars to database
+      _carsRepository.AddRange(updCars);
+      _dataContext.SaveAllChanges();
+      _dataContext.ClearChangeTracker();
+      var expectedCars = new List<Car>();
+      
+      // Act
+      var actual = _carsRepository.SelectByAttributes(
+         maker:"Porsche",
+         model:"Cayenne",
+         yearMin: 2020,
+         yearMax: DateOnly.FromDateTime(DateTime.Now).Year,
+         priceMin: 45_000,
+         priceMax: 50_000
+      );
+      
+      // Assert
+      var comparison = new ComparisonBuilder()
+         //       .IgnoreCircularReferences()
+         .IgnoreProperty<Car>(c=> c.Person)
+         .Create();
+      Assert.True(expectedCars.IsDeepEqual(actual, comparison));
+   }
+   
+   [Fact]
+   public void SelectCarsByPersonIdUt() {
+      // Arrange
+      _peopleRepository.AddRange(_seed.People);
+      _dataContext.SaveAllChanges();
+      _dataContext.ClearChangeTracker();
+      // retriv person from database to track it
+      var actualPeople = _peopleRepository.SelectAll();
+      Assert.Equal(4, actualPeople.ToList().Count);
+      // domain model
+      var (updPeople, updCars) = Seed.InitPeopleWithCars(actualPeople, _seed.Cars);
+      // add cars cars to repository and save all cars to database
+      _carsRepository.AddRange(updCars);
       _dataContext.SaveAllChanges();
       _dataContext.ClearChangeTracker();
       var expectedCars = new List<Car> {_seed.Car1, _seed.Car2};
@@ -194,5 +263,32 @@ public class CarsRepositoryUt : BaseRepository {
       Assert.True(expectedCars.IsDeepEqual(actual, comparison));
    }
 
+   [Fact]
+   public void SelectCarsByPersonIdEmptyUt() {
+      // Arrange
+      _peopleRepository.AddRange(_seed.People);
+      _dataContext.SaveAllChanges();
+      _dataContext.ClearChangeTracker();
+      // retriv person from database to track it
+      var actualPeople = _peopleRepository.SelectAll();
+      Assert.Equal(4, actualPeople.ToList().Count);
+      // domain model
+      var (updPeople, updCars) = Seed.InitPeopleWithCars(actualPeople, _seed.Cars);
+      // add cars cars to repository and save all cars to database
+      _carsRepository.AddRange(updCars);
+      _dataContext.SaveAllChanges();
+      _dataContext.ClearChangeTracker();
+      var expectedCars = new List<Car>();
+      
+      // Act
+      var actual = _carsRepository.SelectCarsByPersonId(Guid.NewGuid());
+      
+      // Assert
+      var comparison = new ComparisonBuilder()
+         //       .IgnoreCircularReferences()
+         .IgnoreProperty<Car>(c=> c.Person)
+         .Create();
+      Assert.True(expectedCars.IsDeepEqual(actual, comparison));
+   }
 
 }

@@ -17,7 +17,7 @@ public class CarsRepository(
    // public virtual void Update(T entity) 
    // public virtual void Remove(T entity) 
    
-   public  IEnumerable<Car>? SelectByAttributes(
+   public  IEnumerable<Car> SelectByAttributes(
       string? maker = null, 
       string? model = null,
       int? yearMin = null,
@@ -41,16 +41,16 @@ public class CarsRepository(
          query = query.Where(car => car.Price <= priceMax.Value);
 
       var cars = query.ToList();
-      _dataContext.LogChangeTracker("Car: SelectByAttributesAsync ");
+      _dataContext.LogChangeTracker("Car: SelectByAttributes");
       return cars;
    }
 
 
-   public IEnumerable<Car>? SelectCarsByPersonId(Guid personId) {
+   public IEnumerable<Car> SelectCarsByPersonId(Guid personId) {
       var cars = _dbSet
          .Where(car => car.PersonId == personId)
          .ToList();
-      _dataContext.LogChangeTracker("Car: SelectCarsByPersonIdAsync ");
+      _dataContext.LogChangeTracker("Car: SelectCarsByPersonId");
       return cars;
    }
 }

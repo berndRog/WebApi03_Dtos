@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using DeepEqual;
+using DeepEqual.Syntax;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
 using WebApi.Core.DomainModel.Entities;
 using WebApiTest.Data.Repositories;
 using Xunit;
 namespace WebApiTest.Controllers.Moq.V1;
 
+// V1 Controller
 [Collection(nameof(SystemTestCollectionDefinition))]
 public class CarsControllerUt : BaseControllerUt {
    
@@ -70,160 +76,286 @@ public class CarsControllerUt : BaseControllerUt {
 
       // Assert
       Assert.NotNull(actionResult);
-      THelper.IsNotFound(actionResult);
+      Assert.IsType<NotFoundObjectResult>(actionResult.Result);
    }
    
+   [Fact]
+   public void Create_Created() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
+      
+      // mock the peopleRepository's FindById method 
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(person);
+      // mock the repository's FindById method to return null
+      _mockCarsRepository.Setup(r => r.FindById(car.Id))
+         .Returns((Car?)null);
+      // mock the repository's Add method
+      _mockCarsRepository.Setup(r => r.Add(It.IsAny<Car>()))
+         .Verifiable();
+      // mock the data context's SaveAllChanges method
+      _mockDataContext.Setup(c => c.SaveAllChanges(It.IsAny<string>()))
+         .Returns(true);
+
+      // Act
+      var actionResult = _carsController.Create(_seed.Person1.Id, car);
+
+      // Assert
+      THelper.IsCreated(actionResult, car);
+      // Verify that the repository's Add method was called once
+      _mockCarsRepository.Verify(r => r.Add(It.IsAny<Car>()), Times.Once);
+      // Verify that the data context's SaveAllChanges method was called once
+      _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Once);
+   }
+
+   [Fact]
+   public void Create_NotFound() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
+      
+      // mock the peopleRepository's FindById method 
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(null as Person);
+      
+      // Act
+      var actionResult =  _carsController.Create(person.Id, car);
+
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+   }
+
+   [Fact]
+   public void Create_BadRequest() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
+      
+      // mock the peopleRepository's FindById method 
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(person);
+      // mock the repository's FindById method to return null
+      _mockCarsRepository.Setup(r => r.FindById(car.Id))
+         .Returns(car);
+      
+      // Act
+      var actionResult =  _carsController.Create(person.Id, car);
+
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<BadRequestObjectResult>(actionResult.Result);
+   }
    
-   /*
-      [Fact]
-      public void Create_Created() {
-         // Arrange
-         var car = _seed.Car1;
-         Car? addedCar = null;
+   [Fact]
+   public void Update_Ok() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
 
-         // mock the repository's FindById method to return null
-         _mockCarsRepository.Setup(r => r.FindById(car.Id))
-            .Returns((Car?)null);
-         // mock the repository's Add method
-         _mockCarsRepository.Setup(r => r.Add(It.IsAny<Car>()))
-            .Callback<Person>(person => addedCar = car);
-         // mock the data context's SaveAllChanges method
-         _mockDataContext.Setup(c => c.SaveAllChanges(It.IsAny<string>()))
-            .Returns(true);
+      var updCar = car;
+      updCar.Update("XYZ", "abc" , 1999, 999m);
+      
+      // mock the peopleRepository's FindById method to return an existing person
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(person);
+      // mock the carsRepository's FindById method to return an existing car
+      _mockCarsRepository.Setup(r => r.FindById(car.Id))
+         .Returns(car);
+      // mock the repository's Update method
+      _mockCarsRepository.Setup(r => r.Update(updCar))
+         .Verifiable();
+      // mock the data context's SaveAllChangesAsync method
+      _mockDataContext.Setup(c => c.SaveAllChanges(It.IsAny<string>()))
+         .Returns(true);
 
-         // Act
-         var actionResult = _carsController.Create(_seed.Person1.Id, car);
+      // Act
+      var actionResult = _carsController.Update(person.Id, car.Id, updCar);
 
-         // Assert
-         THelper.IsCreated(actionResult, car);
-         // Verify that the repository's Add method was called once
-         _mockCarsRepository.Verify(r => r.Add(It.IsAny<Car>()), Times.Once);
-         // Verify that the data context's SaveAllChanges method was called once
-         _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Once);
-      }
+      // Assert
+      THelper.IsOk(actionResult, updCar);
+      // Verify that the repository's Update method was called once
+      _mockCarsRepository.Verify(r => r.Update(It.IsAny<Car>()), Times.Once);
+      // Verify that the data context's SaveAllChangesAsync method was called once
+      _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Once);
+   }
+   
+   [Fact]
+   public void Update_PersonIdNotFound() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
+      
+      var updCar = car;
+      updCar.Update("XYZ", "abc" , 1999, 999m);
+      var routeId = Guid.NewGuid();
 
-      [Fact]
-      public void Create_BadRequest() {
-         // Arrange
-         var person = _seed.Person1;
-         // mock the repository's FindById method to return an existing owner
-         _mockPeopleRepository.Setup(r => r.FindById(person.Id))
-            .Returns(person);
+      // mock the peopleRepository's FindById method to return an existing person
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(null as Person);
+      
+      // Act
+      var actionResult = _carsController.Update(person.Id, car.Id, updCar);
 
-         // Act
-         var actionResult =  _peopleController.Create(person);
-
-         // Assert
-         THelper.IsBadRequest<Person>(actionResult);
-         // Verify that the repository's Add method was not called
-         _mockPeopleRepository.Verify(r => r.Add(It.IsAny<Person>()), Times.Never);
-         // Verify that the data context's SaveAllChanges method was not called
-         _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Never);
-      }
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+   }
 
 
-      [Fact]
-      public void Update_Ok() {
-         // Arrange
-         var person = _seed.Person1;
-         var updPerson = new Person(person.Id, "Erna","meier","0511/6543-2109","e.meier@icloud.com");
+   [Fact]
+   public void Update_BadRequest() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
+      
+      var updCar = car;
+      updCar.Update("XYZ", "abc" , 1999, 999m);
+      
+      var badId = Guid.NewGuid();
 
-         // mock the repository's FindByIdAsync method to return an existing owner
-         _mockPeopleRepository.Setup(r => r.FindById(person.Id))
-            .Returns(person);
-         // mock the repository's Update method
-         _mockPeopleRepository.Setup(r => r.Update(updPerson))
-            .Verifiable();
-         // mock the data context's SaveAllChangesAsync method
-         _mockDataContext.Setup(c => c.SaveAllChanges(It.IsAny<string>()))
-            .Returns(true);
+      // mock the peopleRepository's FindById method to return an existing person
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(person);
+      
+      // Act
+      var actionResult = _carsController.Update(person.Id, badId, updCar);
 
-         // Act
-         var actionResult = _peopleController.Update(person.Id, updPerson);
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<BadRequestObjectResult>(actionResult.Result);
+   }
+  
+   [Fact]
+   public void Update_CarNotFound() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
+      
+      var updCar = car;
+      updCar.Update("XYZ", "abc" , 1999, 999m);
+      
+      // mock the peopleRepository's FindById method to return an existing person
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(person);
+      // Setup the repository to return null for the specified id
+      _mockCarsRepository.Setup(r => r.FindById(car.Id))
+         .Returns(null as Car);
 
-         // Assert
-         THelper.IsOk(actionResult!, updPerson);
-         // Verify that the repository's Update method was called once
-         _mockPeopleRepository.Verify(r => r.Update(It.IsAny<Person>()), Times.Once);
-         // Verify that the data context's SaveAllChangesAsync method was called once
-         _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Once);
-      }
+      // Act
+      var actionResult = _carsController.Update(person.Id, car.Id, updCar);
 
-      [Fact]
-      public void Update_BadRequest() {
-         // Arrange
-         var routeId = Guid.NewGuid();
-         // updPerson has an id different from routeId
-         var updPerson = new Person(_seed.Person1.Id, "Erna", "Meier", "0511/6543-2109", "e.meier@icloud.com");
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+   }
 
-         // Act
-         var actionResult = _peopleController.Update(routeId, updPerson);
+   [Fact]
+   public void Delete_NoContent() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
+ 
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(person);
+      _mockCarsRepository.Setup(r => r.FindById(car.Id))
+         .Returns(car);
+      _mockCarsRepository.Setup(r => r.Remove(car))
+         .Verifiable();
+      _mockDataContext.Setup(c => c.SaveAllChanges(It.IsAny<string>()))
+         .Returns(true);
 
-         // Assert
-         THelper.IsBadRequest(actionResult);
-         // Verify that repository update is not called due to id mismatch
-         _mockPeopleRepository.Verify(r => r.Update(It.IsAny<Person>()), Times.Never);
-         // Verify that SaveAllChanges is not called
-         _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Never);
-      }
+      // Act
+      var actionResult = _carsController.Delete(person.Id, car.Id);
 
-      [Fact]
-      public void Update_NotFound() {
-         // Arrange
-         var person = _seed.Person1;
-         // Setup the repository to return null for the specified id
-         _mockPeopleRepository.Setup(r => r.FindById(person.Id))
-            .Returns((Person)null);
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<NoContentResult>(actionResult);
+   }
+   
+   [Fact]
+   public void Delete_PersonNotFound() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
+      var nonExistentPersonId = Guid.NewGuid();
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(null as Person);
+      
+      // Act
+      var actionResult = _carsController.Delete(nonExistentPersonId, car.Id);
 
-         // Act
-         var actionResult = _peopleController.Update(person.Id, person);
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<NotFoundObjectResult>(actionResult);
+   }
+   
+   [Fact]
+   public void Delete_CarNotFound() {
+      // Arrange
+      var person = _seed.Person1;
+      var car = _seed.Car1;
+      person.AddCar(car);
+      var nonExistentPersonId = Guid.NewGuid();
+      _mockPeopleRepository.Setup(r => r.FindById(person.Id))
+         .Returns(person);
+      _mockCarsRepository.Setup(r => r.FindById(car.Id))
+         .Returns(null as Car);
+      
+      // Act
+      var actionResult = _carsController.Delete(nonExistentPersonId, car.Id);
 
-         // Assert
-         THelper.IsNotFound(actionResult);
-         // Verify that repository update is not called due to id mismatch
-         _mockPeopleRepository.Verify(r => r.Update(It.IsAny<Person>()), Times.Never);
-         // Verify that SaveAllChanges is not called
-         _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Never);
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<NotFoundObjectResult>(actionResult);
+   }
+   
+   [Fact]
+   public void GetCarsByAttributes_Ok() {
+      // Arrange People with Cars
+      var (_, updCars) = Seed.InitPeopleWithCars(_seed.People, _seed.Cars);
 
-      }
+      var yearNow = DateOnly.FromDateTime(DateTime.Now).Year;
+      var expectedCars = updCars.Where(car => 
+         car.Maker == "BMW" && 
+         car.Model == "X5" &&
+         car.Year >= 2020 && car.Year <= yearNow && 
+         car.Price >= 45_000 && car.Price <= 50_000
+      ).ToList();
+      
+      _mockCarsRepository.Setup(r => r.SelectByAttributes("BMW", "X5", 2020, yearNow, 45_000, 50_000))
+         .Returns(expectedCars);
 
-      [Fact]
-      public void Delete_NoContent() {
-         // Arrange
-         var person = _seed.Person1;
-         // Setup the repository to return null for the specified id
-         _mockPeopleRepository.Setup(r => r.FindById(person.Id))
-            .Returns(person);
-         _mockPeopleRepository.Setup(r => r.Remove(person))
-            .Verifiable();
-         _mockDataContext.Setup(c => c.SaveAllChanges(It.IsAny<string>()))
-            .Returns(true);
+      // Act
+      var actionResult = _carsController.GetCarsByAttributes(
+         maker:"BMW",
+         model:"X5",
+         yearMin: 2020,
+         yearMax: yearNow,
+         priceMin: 45_000,
+         priceMax: 50_000
+      );
+   
 
-         // Act
-         var result = _peopleController.Delete(person.Id);
-
-         // Assert
-         THelper.IsNoContent(result);
-         _mockPeopleRepository.Verify(r => r.Remove(person), Times.Once);
-         _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Exactly(1));
-      }
-
-      [Fact]
-      public void Delete_NotFound() {
-         // Arrange
-         var nonExistentPersonId = Guid.NewGuid();
-         _mockPeopleRepository.Setup(r => r.FindById(nonExistentPersonId))
-            .Returns((Person)null);
-
-         // Act
-         var actionResult = _peopleController.Delete(nonExistentPersonId);
-
-         // Assert
-         THelper.IsNotFound(actionResult);
-         // Verify that Remove is never called
-         _mockPeopleRepository.Verify(r => r.Remove(It.IsAny<Person>()), Times.Never);
-         // Verify that SaveAllChanges is never called
-         _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Never);
-      }
-   */
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<OkObjectResult>(actionResult.Result);
+      var actual = ((actionResult.Result as OkObjectResult)?.Value as List<Car>);
+      var comparison = new ComparisonBuilder()
+         //       .IgnoreCircularReferences()
+         .IgnoreProperty<Car>(c=> c.Person)
+         .Create();
+      Assert.True(expectedCars.IsDeepEqual(actual, comparison));
+       
+   }
 }

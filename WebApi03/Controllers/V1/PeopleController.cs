@@ -19,7 +19,7 @@ public class PeopleController(
    
    // get all people http://localhost:5200/carshop/people
    [HttpGet("people")]  
-   public ActionResult<IEnumerable<Person>?> GetAll() {
+   public ActionResult<IEnumerable<Person>> GetAll() {
       var people = peopleRepository.SelectAll();
       return Ok(people);
    }
@@ -45,7 +45,7 @@ public class PeopleController(
    // get person by lastname http://localhost:5200/carshop/people/name?name={name}
    // using sql like operation, i.e. name must be a part of the lastname
    [HttpGet("people/name")]
-   public ActionResult<IEnumerable<Person>?> GetByName(
+   public ActionResult<IEnumerable<Person>> GetByName(
       [Description("Name to be search for")]
       [FromQuery] string name
    ) {
@@ -67,7 +67,10 @@ public class PeopleController(
       peopleRepository.Add(person);
       dataContext.SaveAllChanges();
       
-      return Created($"/people/{person.Id}", person);
+      // return created car as Dto
+      var requestPath = Request?.Path.ToString() ?? @"http://localhost:5200/carshop/people";
+      var uri = new Uri($"{requestPath}/{person.Id}", UriKind.Absolute);
+      return Created(uri, person); 
    }
    
    // update a person http://localhost:5200/carshop/people/{id}
@@ -78,11 +81,12 @@ public class PeopleController(
    ) {
       // check if the id of the person in the body is the same as the id in the url
       if (updPerson.Id != id) 
-         return BadRequest("Id  do not match");
+         return BadRequest("Id in the route and body do not match");
       
       // find person in the repository
       var person = peopleRepository.FindById(id);
-      if (person == null) return NotFound("Person with given id not found");
+      if (person == null) 
+         return NotFound("Person with given id not found");
       
       // update person in the domain model
       person.Update(updPerson.FirstName, updPerson.LastName, 

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using DeepEqual;
 using DeepEqual.Syntax;
+using Microsoft.EntityFrameworkCore;
 using WebApi.Core.DomainModel.Entities;
-using WebApiTest.Data.Repositories;
 using Xunit;
 namespace WebApiTest.Data.Repositories;
 
@@ -56,6 +55,7 @@ public class PeopleRepositoryUt : BaseRepository {
       _peopleRepository.Add(_seed.Person1);
       _dataContext.SaveAllChanges();
       _dataContext.ClearChangeTracker();
+     
       // Act
       // retrieve person from database to track it
       var actualPerson = _peopleRepository.FindById(_seed.Person1.Id);
@@ -65,9 +65,33 @@ public class PeopleRepositoryUt : BaseRepository {
       // update person in repository
       _peopleRepository.Update(actualPerson);
       _dataContext.SaveAllChanges();
+     
       // Assert
       var actual = _peopleRepository.FindById(_seed.Person1.Id);
       Assert.Equivalent(actualPerson, actual);
+   }
+   
+   [Fact]
+   public void Update_EntityNotFoundUt() {
+      // Arrange
+      _peopleRepository.Add(_seed.Person1);
+      _dataContext.SaveAllChanges();
+      _dataContext.ClearChangeTracker();
+      // Act
+      // retrieve person from database to track it
+      var actualPerson = _peopleRepository.FindById(_seed.Person1.Id);
+      Assert.NotNull(actualPerson);
+      
+      // Remove the person to simulate entity not found
+      _peopleRepository.Remove(actualPerson);
+      _dataContext.SaveAllChanges();
+      _dataContext.ClearChangeTracker();
+      
+      // domain model
+      actualPerson.Update("Erika","Meier", _seed.Person1.Email, _seed.Person1.Phone);
+      
+      var exception = Assert.Throws<ApplicationException>(() => _peopleRepository.Update(actualPerson));
+      Assert.Equal("Update failed, entity with given id not found", exception.Message);
    }
    
    [Fact]
@@ -128,9 +152,9 @@ public class PeopleRepositoryUt : BaseRepository {
       var actual = _peopleRepository.FindByIdJoinCars(person.Id);      
       Assert.NotNull(actual);
       
-      Console.WriteLine(BaseRepository.ToPrettyJson("person", person));
+      Console.WriteLine(ToPrettyJson("person", person));
      
-      Console.WriteLine(BaseRepository.ToPrettyJson("actual", actual));
+      Console.WriteLine(ToPrettyJson("actual", actual));
       
       
       // Assert

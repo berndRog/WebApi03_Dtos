@@ -27,7 +27,7 @@ public static class THelper {
    
    // HttpStatusCode.Ok (200)
    public static void IsEnumerableOk<T>(
-      ActionResult<T?> actionResult, 
+      ActionResult<T> actionResult, 
       T expected
    ) where T : class {
       // Check if actionResult is not null
@@ -67,75 +67,6 @@ public static class THelper {
       Assert.NotNull(value);
       Assert.Equivalent(expected, value);
    }
- 
-   // HttpStatusCode.NoContent (204)
-   public static void IsNoContent(
-      IActionResult actionResult
-   ) {
-      Assert.NotNull(actionResult);
-      Assert.IsType<NoContentResult>(actionResult);
-   }
-   
-   public static void IsNoContent<T>(
-      ActionResult<T?> actionResult
-   ) {
-      Assert.NotNull(actionResult);
-      Assert.IsType<NoContentResult>(actionResult);
-   }
-
-   
-   // HttpStatusCode.BadRequest (400)
-   public static void IsBadRequest<T>(
-      ActionResult<T?> actionResult
-   ) {
-      Assert.NotNull(actionResult);
-      Assert.IsType<BadRequestObjectResult>(actionResult.Result);
-   }
-
-   // HttpStatusCode.NotFound (404)
-   public static void IsNotFound(
-      IActionResult actionResult
-   ) {
-      Assert.NotNull(actionResult);
-      Assert.IsType<NotFoundResult>(actionResult);
-   }
-
-   // HttpStatusCode.NotFound (404)
-   public static void IsNotFound<T>(
-      ActionResult<T?> actionResult
-   ) {
-      Assert.NotNull(actionResult);
-      Assert.IsType<NotFoundObjectResult>(actionResult.Result);
-   }
-   
-   // HttpStatusCode.Conflict (409)
-   public static void IsConflict<T>(
-      ActionResult<T?> actionResult
-   ) where T : class {
-      
-      // Check if actionResult is not null
-      Assert.NotNull(actionResult);
-      
-      // Check if actionResult! is of type ConflictObjectResult
-      // and evaluate the result
-      var(success,result,value) = 
-         EvalActionResult<ConflictObjectResult, T?>(actionResult!);
-      
-      // Check if success is false
-      Assert.False(success);
-      
-      // Check if result.StatusCode is 409
-      Assert.Equal(409, result.StatusCode);
-   }
-   
-   // HttpStatusCode.Conflict (409)
-   public static void IsConflict(
-      IActionResult actionResult
-   ) {
-      Assert.NotNull(actionResult);
-      Assert.IsType<ConflictObjectResult>(actionResult);
-   }
-   
    
    private static (bool, T, S) EvalActionResult<T, S>(
       ActionResult<S?> actionResult

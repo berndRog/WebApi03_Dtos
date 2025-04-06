@@ -17,7 +17,7 @@ public class CarsController(
    
    // get all cars http://localhost:5200/carshop/cars
    [HttpGet("cars")]
-   public ActionResult<IEnumerable<Car>?> GetAll() {
+   public ActionResult<IEnumerable<Car>> GetAll() {
       // get all cars 
       var cars = carsRepository.SelectAll();
       return Ok(cars);
@@ -40,13 +40,12 @@ public class CarsController(
       [FromRoute] Guid personId,
       [FromBody]  Car car
    ) {
-      if(carsRepository.FindById(car.Id) != null)
-         return BadRequest("Car with given Id already exists");
-      
-      // find person in the repository
       var person = peopleRepository.FindById(personId);
       if (person == null)
-         return BadRequest("personId doesn't exist");
+         return NotFound("personId not found");
+      
+      if(carsRepository.FindById(car.Id) != null) 
+         return BadRequest("Car with given id already exists"); 
       
       // add car to person in the domain model
       person.AddCar(car);
@@ -54,10 +53,10 @@ public class CarsController(
       // add car to repository and save changes
       carsRepository.Add(car); 
       dataContext.SaveAllChanges();
-      
-      // return created car as Dto
-      var requestPath = Request?.Path ?? $"http://localhost:5200/carshop/cars/{car.Id}";
-      var uri = new Uri($"{requestPath}/{car.Id}", UriKind.Relative);
+
+      // return created car
+      var requestPath = Request?.Path.ToString() ?? @"http://localhost:5200/carshop/cars";
+      var uri = new Uri($"{requestPath}/{car.Id}", UriKind.Absolute);
       return Created(uri, car); 
    }
 
@@ -68,11 +67,19 @@ public class CarsController(
       [FromRoute] Guid id,
       [FromBody]  Car updCar
    ) {
+      // check if person exists
+      var person = peopleRepository.FindById(personId);
+      if (person == null) 
+         return NotFound("Person with given personId not found");
+
       // check if Id in the route and body match
-      if(personId != updCar.Id) return BadRequest("Update Car: Id in the route and body do not match");
-      // check if person with given Id exists
+      if(updCar.Id != id) 
+         return BadRequest("Id in the route and body do not match");
+      
+      // find car in the repository
       var car = carsRepository.FindById(id);
-      if (car == null) return NotFound("Update Car: Car with given id not found");
+      if (car == null) 
+         return NotFound("Car with given id not found");
 
       // update car in the domain model
       car.Update(updCar.Maker, updCar.Model, updCar.Year, updCar.Price);
@@ -92,10 +99,11 @@ public class CarsController(
    ) {
       // find person in the repository
       var person = peopleRepository.FindById(personId);
-      if(person == null) return NotFound("Delete Car: Person not found.");
+      if(person == null) return NotFound("Person not found.");
+      
       // find car in the repository
       var car = carsRepository.FindById(id); 
-      if(car == null) return NotFound("Delete Car: Car not found.");
+      if(car == null) return NotFound("Car not found.");
       
       // remove car from person in the doimain model
       person.RemoveCar(car);
@@ -111,7 +119,7 @@ public class CarsController(
    // filter cars by attributes http://localhost:5200/carshop/cars/attributes
    // filter criteria are passed in the header
    [HttpGet("cars/attributes")]
-   public ActionResult<IEnumerable<Car>?> GetCarsByAttributes(
+   public ActionResult<IEnumerable<Car>> GetCarsByAttributes(
       [FromHeader] string? maker,
       [FromHeader] string? model,
       [FromHeader] int? yearMin,
@@ -128,7 +136,7 @@ public class CarsController(
       
    // get all cars of a given person http://localhost:5200/carshop/people/{personId}/cars
    [HttpGet("people/{personId:guid}/cars")]
-   public ActionResult<IEnumerable<Car>?> GetCarsByPersonId(
+   public ActionResult<IEnumerable<Car>> GetCarsByPersonId(
       [FromRoute] Guid personId
    ) {
       // get all cars of a given person

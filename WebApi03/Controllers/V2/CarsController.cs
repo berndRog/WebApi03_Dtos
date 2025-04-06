@@ -24,7 +24,7 @@ public class CarsController(
    [HttpGet("cars")]
    [EndpointSummary("Get all cars")]
    [ProducesResponseType(StatusCodes.Status200OK)]
-   public ActionResult<IEnumerable<CarDto>?> GetAll() {
+   public ActionResult<IEnumerable<CarDto>> GetAll() {
       // get all cars 
       var cars = carsRepository.SelectAll();
       return Ok(cars?.Select(c => c.ToCarDto()));
@@ -54,13 +54,13 @@ public class CarsController(
       [Description("CarDto of the new car's data")]
       [FromBody]  CarDto carDto
    ) {
-      if(carsRepository.FindById(carDto.Id) != null)
-         return BadRequest("Car with given Id already exists");
-      
       // find person in the repository
       var person = peopleRepository.FindById(personId);
       if (person == null)
-         return BadRequest("PersonId doesn't exist");
+         return NotFound("personId not found");
+
+      if(carsRepository.FindById(carDto.Id) != null) 
+         return BadRequest("Car with given id already exists"); 
       
       // map Dto to entity
       var car = carDto.ToCar();
@@ -91,11 +91,16 @@ public class CarsController(
       [Description("CarDto of the updated car's data")]
       [FromBody]  CarDto updCarDto
    ) {
-
+      // find person in the repository
+      var person = peopleRepository.FindById(personId);
+      if (person == null) 
+         return NotFound("Person with given personId not found");
+      
       // check if Id in the route and body match
-      if(id != updCarDto.Id) 
+      if(updCarDto.Id != id)
          return BadRequest("Update Car: Id in the route and body do not match");
-      // check if person with given Id exists
+
+      // find car in the repository
       var car = carsRepository.FindById(id);
       if (car == null) 
          return NotFound("Update Car: Car with given id not found");
@@ -117,7 +122,7 @@ public class CarsController(
    [EndpointSummary("Delete a car for a given person")]
    [ProducesResponseType(StatusCodes.Status204NoContent)]
    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
-   public ActionResult<Car?> Delete(
+   public IActionResult Delete(
       [Description("Unique id for the given person")] 
       [FromRoute] Guid personId,
       [Description("Unique id for the given car")] 
@@ -126,7 +131,8 @@ public class CarsController(
       // find person in the repository
       var person = peopleRepository.FindById(personId);
       if(person == null) 
-         return NotFound("Delete Car: Person not found.");
+         return NotFound("Person not found.");
+      
       // find car in the repository
       var car = carsRepository.FindById(id); 
       if(car == null) 
@@ -148,7 +154,7 @@ public class CarsController(
    [HttpGet("cars/attributes")]
    [EndpointSummary("Get cars by attributes")]
    [ProducesResponseType(StatusCodes.Status200OK)]
-   public ActionResult<IEnumerable<CarDto>?> GetCarsByAttrubutes(
+   public ActionResult<IEnumerable<CarDto>> GetCarsByAttributes(
       [Description("maker of the car to be search for (can be null)")]
       [FromHeader] string? maker,
       [Description("model of the car to be search for (can be null)")]
@@ -173,7 +179,7 @@ public class CarsController(
    [EndpointSummary("Get all cars of a given person")]
    [ProducesResponseType(StatusCodes.Status200OK)]
    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
-   public ActionResult<IEnumerable<CarDto>?> GetCarsByPersonId(
+   public ActionResult<IEnumerable<CarDto>> GetCarsByPersonId(
       [Description("Unique id for the given person")] 
       [FromRoute] Guid personId
    ) {

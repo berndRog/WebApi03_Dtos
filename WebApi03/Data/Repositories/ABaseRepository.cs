@@ -31,15 +31,19 @@ public abstract class ABaseRepository<T>(
 
    // Update 
    public virtual void Update(T entity) {
-      var entry = dataContext.Entry(entity);
-      if (entry == null)
+      var existingEntity = _dbSet.Find(entity.Id);
+      if (existingEntity == null)
          throw new ApplicationException($"Update failed, entity with given id not found");
+      var entry = dataContext.Entry(existingEntity);
       if (entry.State == EntityState.Detached) _dbSet.Attach(entity);
       entry.State = EntityState.Modified;
    }
    
    public void Remove(T entity) {
-      var entry = dataContext.Entry(entity);
+      var existingEntity = _dbSet.Find(entity.Id);
+      if (existingEntity == null)
+         throw new ApplicationException($"Update failed, entity with given id not found");
+      var entry = dataContext.Entry(existingEntity);
       if (entry == null) throw new Exception($"{typeof(T).Name} to be removed not found");
       if (entry.State == EntityState.Detached) _dbSet.Attach(entity);
       entry.State = EntityState.Deleted;

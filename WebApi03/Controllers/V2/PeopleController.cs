@@ -23,7 +23,7 @@ public class PeopleController(
    [HttpGet("people")]  
    [EndpointSummary("Get all people")] 
    [ProducesResponseType(StatusCodes.Status200OK)]
-   public ActionResult<IEnumerable<PersonDto>?> GetAll() {
+   public ActionResult<IEnumerable<PersonDto>> GetAll() {
       var people = peopleRepository.SelectAll();
       return Ok(people?.Select(p => p.ToPersonDto()));
    }
@@ -55,7 +55,7 @@ public class PeopleController(
    [EndpointSummary("Get person by name")]
    [ProducesResponseType(StatusCodes.Status200OK)]
    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
-   public ActionResult<IEnumerable<PersonDto>?> GetByName(
+   public ActionResult<IEnumerable<PersonDto>> GetByName(
       [Description("Name to be search for")]
       [FromQuery] string name
    ) {
@@ -84,7 +84,10 @@ public class PeopleController(
       peopleRepository.Add(person);
       dataContext.SaveAllChanges();
       
-      return Created($"/people/{person.Id}", person.ToPersonDto());
+      // return created car as Dto
+      var requestPath = Request?.Path.ToString() ?? @"http://localhost:5200/carshop/v2/people";
+      var uri = new Uri($"{requestPath}/{person.Id}", UriKind.Absolute);
+      return Created(uri, person.ToPersonDto()); 
    }
  
    // update a person http://localhost:5200/carshop/v2/people/{id}

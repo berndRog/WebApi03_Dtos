@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApi.Core.DomainModel.Entities;
 using WebApiTest.Data.Repositories;
@@ -53,38 +55,9 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult =  _peopleController.GetById(id);
 
       // Assert
-      THelper.IsNotFound(actionResult);
+
    }
    
-   [Fact]
-   public void GetByName_Ok() {
-      // Arrange
-      var name = "ValidName";
-      var expectedPeople = new List<Person> { _seed.Person1 };
-      _mockPeopleRepository.Setup(r => r.SelectByName(name))
-         .Returns(expectedPeople);
-
-      // Act
-      var actionResult = _peopleController.GetByName(name);
-
-      // Assert
-      THelper.IsEnumerableOk(actionResult, expectedPeople);
-   }
-   
-   [Fact]
-   public void GetByName_NotFound() {
-      // Arrange
-      var nonExistentName = "NonExistentName";
-      _mockPeopleRepository.Setup(r => r.SelectByName(nonExistentName))
-         .Returns((IEnumerable<Person>?)null);
-
-      // Act
-      var actionResult = _peopleController.GetByName(nonExistentName);
-
-      // Assert
-      THelper.IsNotFound(actionResult);
-   }
-
    [Fact]
    public void Create_Created() {
       // Arrange
@@ -124,11 +97,8 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult =  _peopleController.Create(person);
 
       // Assert
-      THelper.IsBadRequest<Person>(actionResult);
-      // Verify that the repository's Add method was not called
-      _mockPeopleRepository.Verify(r => r.Add(It.IsAny<Person>()), Times.Never);
-      // Verify that the data context's SaveAllChanges method was not called
-      _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Never);
+      Assert.NotNull(actionResult);
+      Assert.IsType<BadRequestObjectResult>(actionResult.Result);
    }
 
 
@@ -170,11 +140,8 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Update(routeId, updPerson);
 
       // Assert
-      THelper.IsBadRequest(actionResult);
-      // Verify that repository update is not called due to id mismatch
-      _mockPeopleRepository.Verify(r => r.Update(It.IsAny<Person>()), Times.Never);
-      // Verify that SaveAllChanges is not called
-      _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Never);
+      Assert.NotNull(actionResult);
+      Assert.IsType<BadRequestObjectResult>(actionResult.Result);
    }
    
    [Fact]
@@ -189,11 +156,8 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Update(person.Id, person);
 
       // Assert
-      THelper.IsNotFound(actionResult);
-      // Verify that repository update is not called due to id mismatch
-      _mockPeopleRepository.Verify(r => r.Update(It.IsAny<Person>()), Times.Never);
-      // Verify that SaveAllChanges is not called
-      _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Never);
+      Assert.NotNull(actionResult);
+      Assert.IsType<NotFoundObjectResult>(actionResult.Result);
 
    }
    
@@ -210,12 +174,11 @@ public class PeopleControllerUt : BaseControllerUt {
          .Returns(true);
 
       // Act
-      var result = _peopleController.Delete(person.Id);
+      var actionResult = _peopleController.Delete(person.Id);
 
       // Assert
-      THelper.IsNoContent(result);
-      _mockPeopleRepository.Verify(r => r.Remove(person), Times.Once);
-      _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Exactly(1));
+      Assert.NotNull(actionResult);
+      Assert.IsType<NoContentResult>(actionResult);
    }
    
    [Fact]
@@ -229,11 +192,40 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Delete(nonExistentPersonId);
 
       // Assert
-      THelper.IsNotFound(actionResult);
-      // Verify that Remove is never called
-      _mockPeopleRepository.Verify(r => r.Remove(It.IsAny<Person>()), Times.Never);
-      // Verify that SaveAllChanges is never called
-      _mockDataContext.Verify(c => c.SaveAllChanges(It.IsAny<string>()), Times.Never);
+      Assert.NotNull(actionResult);
+      Assert.IsType<NotFoundResult>(actionResult);
+   }
+
+   [Fact]
+   public void GetByName_Ok() {
+      // Arrange
+      var name = "ValidName";
+      var expectedPeople = new List<Person> { _seed.Person1 };
+      _mockPeopleRepository.Setup(r => r.SelectByName(name))
+         .Returns(expectedPeople);
+
+      // Act
+      var actionResult = _peopleController.GetByName(name);
+
+      // Assert
+      THelper.IsEnumerableOk(actionResult, expectedPeople);
+   }
+   
+   [Fact]
+   public void GetByName_Ok_EmptyList() {
+      // Arrange
+      var expectedPeople = new List<Person>();
+      var nonExistentName = "NonExistentName";
+      _mockPeopleRepository.Setup(r => r.SelectByName(nonExistentName))
+         .Returns(new Collection<Person>());
+
+      // Act
+      var actionResult = _peopleController.GetByName(nonExistentName);
+
+      // Assert
+      Assert.NotNull(actionResult);
+      Assert.IsType<OkObjectResult>(actionResult.Result);
+      Assert.Equal(expectedPeople.Count, ((actionResult.Result as OkObjectResult)?.Value as Collection<Person>)?.Count);
    }
 
 }

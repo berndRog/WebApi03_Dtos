@@ -60,7 +60,7 @@ public class PeopleControllerUt : BaseController {
 
       // Assert
       Assert.NotNull(actionResult);
-      THelper.IsNotFound(actionResult);
+      Assert.IsType<NotFoundObjectResult>(actionResult.Result);
    }
    
    [Fact]
@@ -127,7 +127,8 @@ public class PeopleControllerUt : BaseController {
 
       // Assert
       Assert.NotNull(actionResult);
-      THelper.IsBadRequest(actionResult);
+      Assert.IsType<BadRequestObjectResult>(actionResult.Result);
+
    }
    
    [Fact]
@@ -161,7 +162,8 @@ public class PeopleControllerUt : BaseController {
 
       // Assert
       Assert.NotNull(actionResult);
-      THelper.IsBadRequest(actionResult);
+      Assert.IsType<BadRequestObjectResult>(actionResult.Result);
+
    }
 
    [Fact]
@@ -178,7 +180,9 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.Update(updPerson.Id, updPersonDto);
 
       // Assert
-      THelper.IsNotFound(actionResult);
+      Assert.NotNull(actionResult);
+      Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+
    }
    
    [Fact]
@@ -190,10 +194,12 @@ public class PeopleControllerUt : BaseController {
       _dataContext.ClearChangeTracker();
 
       // Act
-      var result = _peopleController.Delete(person.Id);
+      var actionResult = _peopleController.Delete(person.Id);
 
       // Assert
-      THelper.IsNoContent(result);
+      Assert.NotNull(actionResult);
+      Assert.IsType<NoContentResult>(actionResult);
+      
    }
    
    [Fact]
@@ -209,7 +215,9 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.Delete(nonExistentPersonId);
 
       // Assert
-      THelper.IsNotFound(actionResult);
+      Assert.NotNull(actionResult);
+      Assert.IsType<NotFoundResult>(actionResult);
+
    }
 
 }

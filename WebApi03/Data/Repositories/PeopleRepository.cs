@@ -17,9 +17,9 @@ public class PeopleRepository(
    // public virtual void Update(T entity) 
    // public virtual void Remove(T entity) 
    
-   public IEnumerable<Person>? SelectByName(string namePattern) {
+   public IEnumerable<Person> SelectByName(string namePattern) {
       if (string.IsNullOrWhiteSpace(namePattern))
-         return null;
+         return [];
       var people = _dbSet
          .Where(person => EF.Functions.Like(person.LastName, $"%{namePattern.Trim()}%"))
          .ToList();
