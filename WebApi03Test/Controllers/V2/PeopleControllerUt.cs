@@ -15,7 +15,7 @@ namespace WebApiTest.Controllers;
 public class PeopleControllerUt : BaseController {
    
    [Fact]
-   public void GetAll_Ok() {
+   public void GetAllUt_Ok() {
       // Arrange
       _peopleRepository.AddRange(_seed.People);
       _dataContext.SaveAllChanges("Add people");
@@ -31,7 +31,7 @@ public class PeopleControllerUt : BaseController {
    }
    
    [Fact]
-   public void GetById_Ok() {
+   public void GetByIdUt_Ok() {
       // Arrange
       _peopleRepository.AddRange(_seed.People);
       _dataContext.SaveAllChanges("Add people");
@@ -48,7 +48,7 @@ public class PeopleControllerUt : BaseController {
    }
    
    [Fact]
-   public void GetById_NotFound() {
+   public void GetByIdUt_NotFound() {
       // Arrange
       // Arrange
       _peopleRepository.AddRange(_seed.People);
@@ -64,7 +64,7 @@ public class PeopleControllerUt : BaseController {
    }
    
    [Fact]
-   public void GetByName_Ok() {
+   public void GetByNameUt_Ok() {
       // Arrange
       _peopleRepository.AddRange(_seed.People);
       _dataContext.SaveAllChanges("Add people");
@@ -84,7 +84,7 @@ public class PeopleControllerUt : BaseController {
    }
 
    [Fact]
-   public void GetByName_NotFound() {
+   public void GetByNameUt_NotFound() {
       // Arrange
       _peopleRepository.AddRange(_seed.People);
       _dataContext.SaveAllChanges("Add people");
@@ -100,7 +100,7 @@ public class PeopleControllerUt : BaseController {
    }
 
    [Fact]
-   public void Create_Created() {
+   public void CreateUt_Created() {
       // Arrange
       var person = _seed.Person1;
       
@@ -114,7 +114,7 @@ public class PeopleControllerUt : BaseController {
    }
 
    [Fact]
-   public void Create_BadRequest() {
+   public void CreateUt_BadRequest() {
       // Arrange
       var person = _seed.Person1;
       _peopleRepository.Add(person);
@@ -132,7 +132,7 @@ public class PeopleControllerUt : BaseController {
    }
    
    [Fact]
-   public void Update_Ok() {
+   public void UpdateUt_Ok() {
       // Arrange
       var person = _seed.Person1;
       _peopleRepository.Add(person);
@@ -150,7 +150,7 @@ public class PeopleControllerUt : BaseController {
    }
 
    [Fact]
-   public void Update_BadRequest() {
+   public void UpdateUt_BadRequest() {
       // Arrange
       var routeId = Guid.NewGuid();
       // updPerson has an id different from routeId
@@ -167,7 +167,7 @@ public class PeopleControllerUt : BaseController {
    }
 
    [Fact]
-   public void Update_NotFound() {
+   public void UpdateUt_NotFound() {
       // Arrange
       var person = _seed.Person2;
       _peopleRepository.Add(person);
@@ -186,7 +186,7 @@ public class PeopleControllerUt : BaseController {
    }
    
    [Fact]
-   public void Delete_NoContent() {
+   public void DeleteUt_NoContent() {
       // Arrange
       var person = _seed.Person1;
       _peopleRepository.Add(person);
@@ -203,7 +203,7 @@ public class PeopleControllerUt : BaseController {
    }
    
    [Fact]
-   public void Delete_NotFound() {
+   public void DeleteUt_NotFound() {
       // Arrange
       var person = _seed.Person2;
       _peopleRepository.Add(person);

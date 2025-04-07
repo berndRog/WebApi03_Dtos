@@ -13,7 +13,7 @@ public class PeopleControllerUt : BaseControllerUt {
    
    
    [Fact]
-   public void GetAll_Ok() {
+   public void GetAllUt_Ok() {
       // Arrange
       var expectedPeople = _seed.People;
       _mockPeopleRepository.Setup(r => r.SelectAll())
@@ -28,7 +28,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void GetById_Ok() {
+   public void GetByIdUt_Ok() {
       // Arrange
       var id = _seed.Person1.Id;
       var expected = _seed.Person1;
@@ -45,7 +45,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void GetById_NotFound() {
+   public void GetByIdUt_NotFound() {
       // Arrange
       var id = Guid.NewGuid();
       _mockPeopleRepository.Setup(r => r.FindById(id))
@@ -59,7 +59,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void Create_Created() {
+   public void CreateUt_Created() {
       // Arrange
       var person = _seed.Person1;
       Person? addedPerson = null;
@@ -86,7 +86,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void Create_BadRequest() {
+   public void CreateUt_BadRequest() {
       // Arrange
       var person = _seed.Person1;
       // mock the repository's FindById method to return an existing owner
@@ -103,7 +103,7 @@ public class PeopleControllerUt : BaseControllerUt {
 
 
    [Fact]
-   public void Update_Ok() {
+   public void UpdateUt_Ok() {
       // Arrange
       var person = _seed.Person1;
       var updPerson = new Person(person.Id, "Erna","meier","0511/6543-2109","e.meier@icloud.com");
@@ -130,7 +130,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void Update_BadRequest() {
+   public void UpdateUt_BadRequest() {
       // Arrange
       var routeId = Guid.NewGuid();
       // updPerson has an id different from routeId
@@ -145,7 +145,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void Update_NotFound() {
+   public void UpdateUt_NotFound() {
       // Arrange
       var person = _seed.Person1;
       // Setup the repository to return null for the specified id
@@ -162,7 +162,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void Delete_NoContent() {
+   public void DeleteUt_NoContent() {
       // Arrange
       var person = _seed.Person1;
       // Setup the repository to return null for the specified id
@@ -182,7 +182,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void Delete_NotFound() {
+   public void DeleteUt_NotFound() {
       // Arrange
       var nonExistentPersonId = Guid.NewGuid();
       _mockPeopleRepository.Setup(r => r.FindById(nonExistentPersonId))
@@ -197,7 +197,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void GetByName_Ok() {
+   public void GetByNameUt_Ok() {
       // Arrange
       var name = "ValidName";
       var expectedPeople = new List<Person> { _seed.Person1 };
@@ -212,7 +212,7 @@ public class PeopleControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void GetByName_Ok_EmptyList() {
+   public void GetByNameUt_Ok_EmptyList() {
       // Arrange
       var expectedPeople = new List<Person>();
       var nonExistentName = "NonExistentName";

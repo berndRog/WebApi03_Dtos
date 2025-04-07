@@ -19,7 +19,7 @@ namespace WebApiTest.Controllers.Moq.V2;
 public class CarsControllerUt : BaseControllerUt {
    
    [Fact]
-   public void GetCars_Ok() {
+   public void GetAllUt_Ok() {
       // Arrange People with Cars
       var (_, expectedCars) = Seed.InitPeopleWithCars(_seed.People, _seed.Cars);
       
@@ -34,23 +34,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void GetCarsByPersonId_Ok() {
-      // Arrange People with Cars
-      var (_, updCars) = Seed.InitPeopleWithCars(_seed.People, _seed.Cars);
-      var expectedCars = updCars.Where(c => c.PersonId == _seed.Person1.Id);
-      
-      _mockCarsRepository.Setup(r => r.SelectCarsByPersonId(_seed.Person1.Id))
-         .Returns(expectedCars);
-
-      // Act
-      var actionResult = _carsController.GetCarsByPersonId(_seed.Person1.Id);
-
-      // Assert
-      THelper.IsEnumerableOk(actionResult, expectedCars.Select(c => c.ToCarDto()));
-   }
-   
-   [Fact]
-   public void GetById_Ok() {
+   public void GetByIdUt_Ok() {
       // Arrange
       var id = _seed.Car1.Id;
       var expected = _seed.Car1;
@@ -66,7 +50,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void GetById_NotFound() {
+   public void GetByIdUt_NotFound() {
       // Arrange
       var id = Guid.NewGuid();
       _mockCarsRepository.Setup(r => r.FindById(id))
@@ -81,7 +65,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void Create_Created() {
+   public void CreateUt_Created() {
       // Arrange
       var person = _seed.Person1;
       var car = _seed.Car1;
@@ -113,7 +97,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void Create_NotFound() {
+   public void CreateUt_NotFound() {
       // Arrange
       var person = _seed.Person1;
       var car = _seed.Car1;
@@ -133,7 +117,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void Create_BadRequest() {
+   public void CreateUt_BadRequest() {
       // Arrange
       var person = _seed.Person1;
       var car = _seed.Car1;
@@ -156,7 +140,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void Update_Ok() {
+   public void UpdateUt_Ok() {
       // Arrange
       var person = _seed.Person1;
       var car = _seed.Car1;
@@ -189,7 +173,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void Update_PersonIdNotFound() {
+   public void UpdateUt_PersonIdNotFound() {
       // Arrange
       var person = _seed.Person1;
       var car = _seed.Car1;
@@ -213,7 +197,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void Update_BadRequest() {
+   public void UpdateUt_BadRequest() {
       // Arrange
       var person = _seed.Person1;
       var car = _seed.Car1;
@@ -238,7 +222,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
   
    [Fact]
-   public void Update_CarNotFound() {
+   public void UpdateUt_CarNotFound() {
       // Arrange
       var person = _seed.Person1;
       var car = _seed.Car1;
@@ -264,7 +248,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
 
    [Fact]
-   public void Delete_NoContent() {
+   public void DeleteUt_NoContent() {
       // Arrange
       var person = _seed.Person1;
       var car = _seed.Car1;
@@ -288,7 +272,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void Delete_PersonNotFound() {
+   public void DeleteUt_PersonNotFound() {
       // Arrange
       var person = _seed.Person1;
       var car = _seed.Car1;
@@ -306,7 +290,7 @@ public class CarsControllerUt : BaseControllerUt {
    }
    
    [Fact]
-   public void GetCarsByAttributes_Ok() {
+   public void GetCarsByAttributesUt_Ok() {
       // Arrange People with Cars
       var (_, updCars) = Seed.InitPeopleWithCars(_seed.People, _seed.Cars);
 
@@ -334,6 +318,22 @@ public class CarsControllerUt : BaseControllerUt {
 
       // Assert
       THelper.IsEnumerableOk(actionResult, expectedCars.Select(c => c.ToCarDto()));
-       
    }
+   
+   [Fact]
+   public void GetCarsByPersonIdUt_Ok() {
+      // Arrange People with Cars
+      var (_, updCars) = Seed.InitPeopleWithCars(_seed.People, _seed.Cars);
+      var expectedCars = updCars.Where(c => c.PersonId == _seed.Person1.Id);
+      
+      _mockCarsRepository.Setup(r => r.SelectCarsByPersonId(_seed.Person1.Id))
+         .Returns(expectedCars);
+
+      // Act
+      var actionResult = _carsController.GetCarsByPersonId(_seed.Person1.Id);
+
+      // Assert
+      THelper.IsEnumerableOk(actionResult, expectedCars.Select(c => c.ToCarDto()));
+   }
+
 }
