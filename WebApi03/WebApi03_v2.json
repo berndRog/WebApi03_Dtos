@@ -57,6 +57,17 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": { }
+            }
           }
         }
       }
@@ -108,6 +119,17 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": { }
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -291,7 +313,7 @@
         }
       }
     },
-    "/carshop/v2/cars/attributes": {
+    "/carshop/v2/cars/filter": {
       "get": {
         "tags": [
           "Cars"

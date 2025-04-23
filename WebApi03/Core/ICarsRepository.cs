@@ -13,6 +13,6 @@ public interface ICarsRepository: IBaseRepository<Car> {
       string? maker, string? model, int? yearMin, int? yearMax, 
       decimal? priceMin, decimal? priceMax);
    
-   IEnumerable<Car> SelectCarsByPersonId(Guid personId);
+   IEnumerable<Car> SelectByPersonId(Guid personId);
    
 }

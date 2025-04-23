@@ -137,22 +137,22 @@ public class Seed {
    //    return this;
    // }
    
-   public static (IEnumerable<Person>, IEnumerable<Car>) InitPeopleWithCars(
+   public static (List<Person>, List<Car>) InitPeopleWithCars(
       IEnumerable<Person> people,
       IEnumerable<Car> cars
    ) {
-      var arrayPeople = people.ToArray();
-      var arrayCars = cars.ToArray();
-      if(arrayPeople.Count() != 4 || arrayCars.Count() != 8) 
+      var lPeople = people.ToList();
+      var lCars = cars.ToList();
+      if(lPeople.Count() != 4 || lCars.Count() != 8) 
          throw new ArgumentException("Invalid number of people or cars");
-      arrayPeople[0].AddCar(arrayCars[0]);
-      arrayPeople[0].AddCar(arrayCars[1]);
-      arrayPeople[1].AddCar(arrayCars[2]);
-      arrayPeople[1].AddCar(arrayCars[3]);
-      arrayPeople[2].AddCar(arrayCars[4]);
-      arrayPeople[2].AddCar(arrayCars[5]);
-      arrayPeople[2].AddCar(arrayCars[6]);
-      arrayPeople[3].AddCar(arrayCars[7]);
-      return (arrayPeople, arrayCars);
+      lPeople[0].AddCar(lCars[0]);
+      lPeople[0].AddCar(lCars[1]);
+      lPeople[1].AddCar(lCars[2]);
+      lPeople[1].AddCar(lCars[3]);
+      lPeople[2].AddCar(lCars[4]);
+      lPeople[2].AddCar(lCars[5]);
+      lPeople[2].AddCar(lCars[6]);
+      lPeople[3].AddCar(lCars[7]);
+      return (lPeople, lCars);
    }
 }

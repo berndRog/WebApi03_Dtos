@@ -26,7 +26,6 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.GetAll();
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsEnumerableOk(actionResult!, expectedDtos);
    }
    
@@ -43,7 +42,6 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.GetById(person.Id);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsOk<PersonDto>(actionResult!, expectedDto);
    }
    
@@ -59,7 +57,6 @@ public class PeopleControllerUt : BaseController {
       var actionResult =  _peopleController.GetById(Guid.NewGuid());
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult.Result);
    }
    
@@ -79,7 +76,6 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.GetByName(name);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsEnumerableOk(actionResult, expectedPeople);
    }
 
@@ -96,7 +92,6 @@ public class PeopleControllerUt : BaseController {
 
       // Assert emptyList as result
       THelper.IsEnumerableOk(actionResult, new List<PersonDto>());
-
    }
 
    [Fact]
@@ -109,7 +104,6 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.Create(personDto);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsCreated(actionResult, personDto);
    }
 
@@ -126,9 +120,7 @@ public class PeopleControllerUt : BaseController {
       var actionResult =  _peopleController.Create(personDto);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<BadRequestObjectResult>(actionResult.Result);
-
    }
    
    [Fact]
@@ -145,7 +137,6 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.Update(person.Id, updPersonDto);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsOk(actionResult!, updPersonDto);
    }
 
@@ -161,9 +152,7 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.Update(routeId, updPersonDto);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<BadRequestObjectResult>(actionResult.Result);
-
    }
 
    [Fact]
@@ -180,9 +169,7 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.Update(updPerson.Id, updPersonDto);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult.Result);
-
    }
    
    [Fact]
@@ -197,9 +184,7 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.Delete(person.Id);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NoContentResult>(actionResult);
-      
    }
    
    [Fact]
@@ -215,9 +200,6 @@ public class PeopleControllerUt : BaseController {
       var actionResult = _peopleController.Delete(nonExistentPersonId);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundResult>(actionResult);
-
    }
-
 }

@@ -23,7 +23,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.GetAll();
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsEnumerableOk(actionResult, expectedPeople);
    }
    
@@ -40,7 +39,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.GetById(id);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsOk<Person>(actionResult, expected);
    }
 
@@ -55,7 +53,7 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult =  _peopleController.GetById(id);
 
       // Assert
-
+      Assert.IsType<NotFoundObjectResult>(actionResult.Result);
    }
    
    [Fact]
@@ -97,7 +95,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult =  _peopleController.Create(person);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<BadRequestObjectResult>(actionResult.Result);
    }
 
@@ -140,7 +137,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Update(routeId, updPerson);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<BadRequestObjectResult>(actionResult.Result);
    }
    
@@ -156,9 +152,7 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Update(person.Id, person);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult.Result);
-
    }
    
    [Fact]
@@ -177,7 +171,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Delete(person.Id);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NoContentResult>(actionResult);
    }
    
@@ -192,7 +185,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Delete(nonExistentPersonId);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundResult>(actionResult);
    }
 
@@ -223,7 +215,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.GetByName(nonExistentName);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<OkObjectResult>(actionResult.Result);
       Assert.Equal(expectedPeople.Count, ((actionResult.Result as OkObjectResult)?.Value as Collection<Person>)?.Count);
    }

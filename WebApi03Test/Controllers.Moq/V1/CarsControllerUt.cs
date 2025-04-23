@@ -26,7 +26,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult = _carsController.GetAll();
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsEnumerableOk(actionResult, expectedCars);
    }
    
@@ -43,7 +42,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult = _carsController.GetById(id);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsOk(actionResult, expected);
    }
 
@@ -58,7 +56,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult =  _carsController.GetById(id);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult.Result);
    }
    
@@ -108,7 +105,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult =  _carsController.Create(person.Id, car);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult.Result);
    }
 
@@ -130,7 +126,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult =  _carsController.Create(person.Id, car);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<BadRequestObjectResult>(actionResult.Result);
    }
    
@@ -187,7 +182,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult = _carsController.Update(person.Id, car.Id, updCar);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult.Result);
    }
 
@@ -212,7 +206,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult = _carsController.Update(person.Id, badId, updCar);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<BadRequestObjectResult>(actionResult.Result);
    }
   
@@ -237,7 +230,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult = _carsController.Update(person.Id, car.Id, updCar);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult.Result);
    }
 
@@ -261,7 +253,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult = _carsController.Delete(person.Id, car.Id);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NoContentResult>(actionResult);
    }
    
@@ -279,7 +270,6 @@ public class CarsControllerUt : BaseControllerUt {
       var actionResult = _carsController.Delete(nonExistentPersonId, car.Id);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult);
    }
    
@@ -328,10 +318,8 @@ public class CarsControllerUt : BaseControllerUt {
          priceMin: 45_000,
          priceMax: 50_000
       );
-   
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<OkObjectResult>(actionResult.Result);
       var actual = ((actionResult.Result as OkObjectResult)?.Value as List<Car>);
       var comparison = new ComparisonBuilder()
@@ -347,14 +335,13 @@ public class CarsControllerUt : BaseControllerUt {
       var (_, updCars) = Seed.InitPeopleWithCars(_seed.People, _seed.Cars);
       var expectedCars = updCars.Where(c => c.PersonId == _seed.Person1.Id);
       
-      _mockCarsRepository.Setup(r => r.SelectCarsByPersonId(_seed.Person1.Id))
+      _mockCarsRepository.Setup(r => r.SelectByPersonId(_seed.Person1.Id))
          .Returns(expectedCars);
 
       // Act
       var actionResult = _carsController.GetCarsByPersonId(_seed.Person1.Id);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsEnumerableOk(actionResult, expectedCars);
    }
 

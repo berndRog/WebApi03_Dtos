@@ -236,12 +236,12 @@ public class CarsRepositoryUt : BaseRepository {
    }
    
    [Fact]
-   public void SelectCarsByPersonIdUt() {
+   public void SelectByPersonIdUt() {
       // Arrange
       _peopleRepository.AddRange(_seed.People);
       _dataContext.SaveAllChanges();
       _dataContext.ClearChangeTracker();
-      // retriv person from database to track it
+      // retrieve person from database to track it
       var actualPeople = _peopleRepository.SelectAll();
       Assert.Equal(4, actualPeople.ToList().Count);
       // domain model
@@ -253,7 +253,7 @@ public class CarsRepositoryUt : BaseRepository {
       var expectedCars = new List<Car> {_seed.Car1, _seed.Car2};
       
       // Act
-      var actual = _carsRepository.SelectCarsByPersonId(_seed.Person1.Id);
+      var actual = _carsRepository.SelectByPersonId(_seed.Person1.Id);
       
       // Assert
       var comparison = new ComparisonBuilder()
@@ -281,7 +281,7 @@ public class CarsRepositoryUt : BaseRepository {
       var expectedCars = new List<Car>();
       
       // Act
-      var actual = _carsRepository.SelectCarsByPersonId(Guid.NewGuid());
+      var actual = _carsRepository.SelectByPersonId(Guid.NewGuid());
       
       // Assert
       var comparison = new ComparisonBuilder()

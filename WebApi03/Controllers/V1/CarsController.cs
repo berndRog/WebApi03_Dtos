@@ -118,7 +118,7 @@ public class CarsController(
    
    // filter cars by attributes http://localhost:5200/carshop/cars/attributes
    // filter criteria are passed in the header
-   [HttpGet("cars/attributes")]
+   [HttpGet("cars/filter")]
    public ActionResult<IEnumerable<Car>> GetCarsByAttributes(
       [FromHeader] string? maker,
       [FromHeader] string? model,
@@ -140,7 +140,7 @@ public class CarsController(
       [FromRoute] Guid personId
    ) {
       // get all cars of a given person
-      var cars = carsRepository.SelectCarsByPersonId(personId);
+      var cars = carsRepository.SelectByPersonId(personId);
       return Ok(cars);
    }
 }

@@ -265,7 +265,7 @@
         }
       }
     },
-    "/carshop/cars/attributes": {
+    "/carshop/cars/filter": {
       "get": {
         "tags": [
           "Cars"
@@ -607,12 +607,12 @@
             "default": null,
             "nullable": true
           },
+          "person": {
+            "$ref": "#/components/schemas/Person"
+          },
           "personId": {
             "type": "string",
             "format": "uuid"
-          },
-          "person": {
-            "$ref": "#/components/schemas/Person"
           }
         }
       },
@@ -649,12 +649,12 @@
             "default": null,
             "nullable": true
           },
+          "person": {
+            "$ref": "#/components/schemas/Person2"
+          },
           "personId": {
             "type": "string",
             "format": "uuid"
-          },
-          "person": {
-            "$ref": "#/components/schemas/Person2"
           }
         }
       },

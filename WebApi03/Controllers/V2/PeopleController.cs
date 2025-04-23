@@ -84,9 +84,14 @@ public class PeopleController(
       peopleRepository.Add(person);
       dataContext.SaveAllChanges();
       
-      // return created car as Dto
-      var requestPath = Request?.Path.ToString() ?? @"http://localhost:5200/carshop/v2/people";
-      var uri = new Uri($"{requestPath}/{person.Id}", UriKind.Absolute);
+      // return an absolute URL as location 
+      var url = "";
+      if (Request != null) 
+         url = Request?.Scheme + "://" + Request?.Host
+            + Request?.Path.ToString() +$"/{person.Id}";
+      else 
+         url = $"http://localhost:5200/carshop/v2/people/{person.Id}";
+      var uri = new Uri(url, UriKind.Absolute);
       return Created(uri, person.ToPersonDto()); 
    }
  

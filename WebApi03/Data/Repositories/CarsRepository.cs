@@ -46,7 +46,7 @@ public class CarsRepository(
    }
 
 
-   public IEnumerable<Car> SelectCarsByPersonId(Guid personId) {
+   public IEnumerable<Car> SelectByPersonId(Guid personId) {
       var cars = _dbSet
          .Where(car => car.PersonId == personId)
          .ToList();

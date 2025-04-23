@@ -8,7 +8,7 @@ public class Person: AEntity {
    public string LastName { get; private set; } = string.Empty;
    public string? Email { get; private set; }
    public string? Phone { get; private set; } 
-   // 1:n navigation collection Person <-> Cars (0,1):(0,n)
+   // 1:n navigation collection Person (1,1):(0,n) Car
    public ICollection<Car> Cars { get; private set; } = [];
    
    // ctor EF Core.
@@ -46,7 +46,6 @@ public class Person: AEntity {
       Cars.Add(car);
    }
    public void RemoveCar(Car car) {
-      car.Set(null);
       Cars.Remove(car);
    }
 }

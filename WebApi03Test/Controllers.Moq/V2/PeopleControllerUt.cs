@@ -25,8 +25,7 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.GetAll();
 
       // Assert
-      Assert.NotNull(actionResult);
-      THelper.IsEnumerableOk(actionResult!, expectedPeople.Select(p => p.ToPersonDto()));
+      THelper.IsEnumerableOk(actionResult, expectedPeople.Select(p => p.ToPersonDto()));
    }
    
    [Fact]
@@ -42,7 +41,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.GetById(id);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsOk<PersonDto>(actionResult, expected.ToPersonDto());
    }
 
@@ -57,9 +55,7 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult =  _peopleController.GetById(id);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult.Result);
-
    }
    
    [Fact]
@@ -69,7 +65,7 @@ public class PeopleControllerUt : BaseControllerUt {
       
       // mock the repository's FindById method to return null
       _mockPeopleRepository.Setup(r => r.FindById(person.Id))
-         .Returns((Person?)null);
+         .Returns(null as Person);
       // mock the repository's Add method
       _mockPeopleRepository.Setup(r => r.Add(It.IsAny<Person>()))
          .Verifiable();
@@ -82,7 +78,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Create(personDto);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsCreated(actionResult, personDto);
       // Verify that the repository's Add method was called once
       _mockPeopleRepository.Verify(r => r.Add(It.IsAny<Person>()), Times.Once);
@@ -103,11 +98,9 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult =  _peopleController.Create(personDto);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<BadRequestObjectResult>(actionResult.Result);
    }
-
-
+   
    [Fact]
    public void UpdateUt_Ok() {
       // Arrange
@@ -129,7 +122,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Update(person.Id, updPersonDto);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsOk(actionResult!, updPersonDto);
       // Verify that the repository's Update method was called once
       _mockPeopleRepository.Verify(r => r.Update(It.IsAny<Person>()), Times.Once);
@@ -145,11 +137,9 @@ public class PeopleControllerUt : BaseControllerUt {
       var updPerson = new Person(_seed.Person1.Id, "Erna", "Meier", "0511/6543-2109", "e.meier@icloud.com");
 
       // Act
-      var updPersonDto = updPerson.ToPersonDto();
-      var actionResult = _peopleController.Update(routeId, updPersonDto);
+      var actionResult = _peopleController.Update(routeId, updPerson.ToPersonDto());
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<BadRequestObjectResult>(actionResult.Result);
    }
    
@@ -162,11 +152,9 @@ public class PeopleControllerUt : BaseControllerUt {
          .Returns((Person?)null);
       
       // Act
-      var updPersonDto = person.ToPersonDto();
-      var actionResult = _peopleController.Update(person.Id, updPersonDto);
+      var actionResult = _peopleController.Update(person.Id, person.ToPersonDto());
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundObjectResult>(actionResult.Result);
    }
    
@@ -186,9 +174,7 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Delete(person.Id);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NoContentResult>(actionResult);
-
    }
    
    [Fact]
@@ -202,7 +188,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.Delete(nonExistentPersonId);
 
       // Assert
-      Assert.NotNull(actionResult);
       Assert.IsType<NotFoundResult>(actionResult);
    }
 
@@ -218,7 +203,6 @@ public class PeopleControllerUt : BaseControllerUt {
       var actionResult = _peopleController.GetByName(name);
 
       // Assert
-      Assert.NotNull(actionResult);
       THelper.IsEnumerableOk(actionResult, expectedPeople.Select(p => p.ToPersonDto()));
    }
    

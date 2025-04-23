@@ -33,6 +33,8 @@ public class CarsController(
    // get car by id http://localhost:5200/carshop/v2/cars/{id}
    [HttpGet("cars/{id:guid}")]
    [EndpointSummary("Get car by id")]
+   [ProducesResponseType(StatusCodes.Status200OK)]
+   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
    public ActionResult<CarDto?> GetById(
       [Description("Unique id of the car to be search for")] 
       [FromRoute] Guid id
@@ -48,6 +50,7 @@ public class CarsController(
    [EndpointSummary("Create a new car for a given person")]
    [ProducesResponseType<CarDto>(StatusCodes.Status201Created)]
    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
+   [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
    public ActionResult<CarDto?> Create(
       [Description("Unique id of the given person")] 
       [FromRoute] Guid personId,
@@ -71,9 +74,14 @@ public class CarsController(
       carsRepository.Add(car); 
       dataContext.SaveAllChanges();
       
-      // return created car as Dto
-      var requestPath = Request?.Path.ToString() ?? @"http://localhost:5200/carshop/v2/cars";
-      var uri = new Uri($"{requestPath}/{car.Id}", UriKind.Absolute);
+      // return an absolute URL as location 
+      var url = "";
+      if (Request != null) 
+         url = Request?.Scheme + "://" + Request?.Host
+            + Request?.Path.ToString() +$"/{car.Id}";
+      else 
+         url = $"http://localhost:5200/carshop/v2/cars/{car.Id}";
+      var uri = new Uri(url, UriKind.Absolute);
       return Created(uri, car.ToCarDto()); 
    }
 
@@ -151,10 +159,10 @@ public class CarsController(
    
    // filter cars by attributes http://localhost:5200/carshop/v2/cars/attributes
    // filter criteria are passed in the header
-   [HttpGet("cars/attributes")]
+   [HttpGet("cars/filter")]
    [EndpointSummary("Get cars by attributes")]
    [ProducesResponseType(StatusCodes.Status200OK)]
-   public ActionResult<IEnumerable<CarDto>> GetCarsByAttributes(
+   public ActionResult<IEnumerable<CarDto>> GetByAttributes(
       [Description("maker of the car to be search for (can be null)")]
       [FromHeader] string? maker,
       [Description("model of the car to be search for (can be null)")]
@@ -171,7 +179,7 @@ public class CarsController(
       // get all cars by attributes
       var cars = carsRepository.SelectByAttributes(maker, model, yearMin, yearMax, 
          priceMin, priceMax);
-      return Ok(cars?.Select(c => c.ToCarDto()));
+      return Ok(cars?.Select(c => c.ToCarDto()) ?? []);
    }
   
    // get all cars of a given person http://localhost:5200/carshop/v2/people/{personId}/cars
@@ -184,8 +192,8 @@ public class CarsController(
       [FromRoute] Guid personId
    ) {
       // get all cars of a given person
-      var cars = carsRepository.SelectCarsByPersonId(personId);
-      return Ok(cars?.Select(c => c.ToCarDto()));
+      var cars = carsRepository.SelectByPersonId(personId);
+      return Ok(cars?.Select(c => c.ToCarDto()) ?? []);
    }
    
    
